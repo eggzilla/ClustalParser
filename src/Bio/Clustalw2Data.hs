@@ -26,8 +26,8 @@ data Clustalw2Summary = Clustalw2Summary
     alignmentSummaries :: [AlignmentSummary],
     guideTreeFileName :: String,
     groupNumber :: Int,
-    groupSummaries :: [GroupSummary]
-    alignmentScore :: Int
+    groupSummaries :: [GroupSummary],
+    alignmentScore :: Int,
     alignmentFileName :: String
   }
   deriving (Show, Eq)
@@ -35,15 +35,27 @@ data Clustalw2Summary = Clustalw2Summary
 -- | Data structure for 
 data Clustalw2Alignment = Clustalw2Alignment
   { 
-    alignmentEntries :: [Clustalw2AlignmentEntry]
+    alignmentEntries :: [Clustalw2AlignmentEntry],
     conservationTrack :: String
   }
   deriving (Show, Eq)
 
 data Clustalw2AlignmentEntry = Clustalw2AlignmentEntry
   {
-    entrySequenceIdentifier :: String
-    alignedSequence :: String
+    entrySequenceIdentifier :: String,
+    entryAlignedSequence :: String
+  }
+
+data Clustalw2AlignmentSlice = Clustalw2AlignmentSlice
+  {
+    entrySlices :: [Clustalw2AlignmentEntrySlice],
+    conservationTrackSlice :: String
+  }
+
+data Clustalw2AlignmentEntrySlice = Clustalw2AlignmentEntrySlice
+  {
+    entrySequenceSliceIdentifier :: String,
+    alignedSliceSequence :: String
   }
 
 data Clustalw2GuideTree = Clustalw2GuideTree
@@ -54,7 +66,7 @@ data Clustalw2GuideTree = Clustalw2GuideTree
 
 data Clustalw2GuideTreeEntry = Clustalw2GuideTreeEntry
   { 
-    entryDesignation :: String
+    entryDesignation :: String,
     entryDistance :: Double
   }
   deriving (Show, Eq)
