@@ -8,22 +8,8 @@ data Clustalw2Summary = Clustalw2Summary
   {
     clustalw2version :: String,
     sequenceFormat :: String,
-    sequenceAttributes :: [SequenceAttributes],
-    alignmentSummaries :: [AlignmentSummary],
-    guideTreeFileName :: String,
-    groupNumber :: Int,
-    groupSummaries :: [GroupSummary]
-    alignmentScore :: Int
-    alignmentFileName :: String
-  }
-  deriving (Show, Eq)
-
-data Clustalw2Summary = Clustalw2Summary
-  {
-    clustalw2version :: String,
-    sequenceFormat :: String,
-    sequenceAttributes :: [SequenceAttributes],
-    alignmentSummaries :: [AlignmentSummary],
+    parametersOfInputSequences :: [SequenceParameters],
+    pairwiseAlignmentSummaries :: [PairwiseAlignmentSummary],
     guideTreeFileName :: String,
     groupNumber :: Int,
     groupSummaries :: [GroupSummary],
@@ -31,6 +17,31 @@ data Clustalw2Summary = Clustalw2Summary
     alignmentFileName :: String
   }
   deriving (Show, Eq)
+
+data SequenceParameters = SequenceParameters
+  {
+     inputSequenceIndex :: Int,
+     inputSequenceIdentifier :: String,
+     inputSequenceLength :: Int
+  }
+  deriving (Show, Eq)
+
+data PairwiseAlignmentSummary = PairwiseAlignmentSummary
+  {
+     firstSequenceIndex :: Int,
+     secondSequenceIndex :: Int,
+     pairwiseAlignmentScore :: Int
+  }
+  deriving (Show, Eq)
+
+data GroupSummary = GroupSummary
+  {
+     alignmentGroupIndex :: Int,
+     numberOfAlignedSequences :: Int,
+     groupScore :: Int
+  }
+  deriving (Show, Eq)
+
 
 -- | Data structure for 
 data Clustalw2Alignment = Clustalw2Alignment
@@ -45,6 +56,7 @@ data Clustalw2AlignmentEntry = Clustalw2AlignmentEntry
     entrySequenceIdentifier :: String,
     entryAlignedSequence :: String
   }
+  deriving (Show, Eq)
 
 data Clustalw2AlignmentSlice = Clustalw2AlignmentSlice
   {
@@ -57,6 +69,7 @@ data Clustalw2AlignmentEntrySlice = Clustalw2AlignmentEntrySlice
     entrySequenceSliceIdentifier :: String,
     alignedSliceSequence :: String
   }
+  deriving (Show, Eq)
 
 data Clustalw2GuideTree = Clustalw2GuideTree
   { 
