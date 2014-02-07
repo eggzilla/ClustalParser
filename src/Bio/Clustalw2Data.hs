@@ -67,7 +67,7 @@ data Clustalw2AlignmentSlice = Clustalw2AlignmentSlice
 data Clustalw2AlignmentEntrySlice = Clustalw2AlignmentEntrySlice
   {
     entrySequenceSliceIdentifier :: String,
-    alignedSliceSequence :: String
+    entryAlignedSliceSequence :: String
   }
   deriving (Show, Eq)
 

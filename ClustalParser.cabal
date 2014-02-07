@@ -30,7 +30,8 @@ source-repository this
 library
   -- Modules exported by the library.
   exposed-modules:   Bio.ClustalParser
-  other-modules:     Bio.Clustalw2
+  other-modules:     Bio.Clustalw2Data
+                     Bio.Clustalw2Parser
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.5 && <5, parsec
   
