@@ -23,7 +23,9 @@ readInt = read
 genParserClustalw2Alignment :: GenParser Char st Clustalw2Alignment
 genParserClustalw2Alignment = do
   many1 (noneOf "\n")
-  many1 newline
+  newline
+  newline
+  newline
   alignmentSlices <- many1 genParserClustalw2AlignmentSlice
   eof  
   return (mergealignmentSlices alignmentSlices)
@@ -47,19 +49,21 @@ constructAlignmentEntries (entryIdentifier,entrySequence) = Clustalw2AlignmentEn
 genParserClustalw2AlignmentSlice :: GenParser Char st Clustalw2AlignmentSlice
 genParserClustalw2AlignmentSlice = do
   entrySlices <- many1 genParserClustalw2EntrySlice
-  many1 space
-  conservationTrackSlice <- many1 (noneOf "\n")
+  --extract length of identifier and spacer to determine offset of conservation track
+  let offsetLenght = (length (entrySequenceSliceIdentifier (head entrySlices))) + (spacerLength (head entrySlices))
+  spacerAndConservationTrackSlice <- many1 (noneOf "\n")
+  let conservationTrackSlice = drop offsetLenght spacerAndConservationTrackSlice
   newline
   optional newline
   return $ Clustalw2AlignmentSlice entrySlices conservationTrackSlice
 
 genParserClustalw2EntrySlice :: GenParser Char st Clustalw2AlignmentEntrySlice
 genParserClustalw2EntrySlice = do
-  sliceIdentifier <- many1 (noneOf "\n")
-  many1 space
+  sliceIdentifier <- many1 (noneOf " ")
+  spacer <- many1 (char ' ')
   sliceSequence <- many1 (noneOf "\n")
   newline
-  return $ Clustalw2AlignmentEntrySlice sliceIdentifier sliceSequence
+  return $ Clustalw2AlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
 
 -- | 
 parseClustalw2Alignment input = parse genParserClustalw2Alignment "genParserClustalw2Alignment" input

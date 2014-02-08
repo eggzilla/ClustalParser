@@ -63,11 +63,13 @@ data Clustalw2AlignmentSlice = Clustalw2AlignmentSlice
     entrySlices :: [Clustalw2AlignmentEntrySlice],
     conservationTrackSlice :: String
   }
+  deriving (Show, Eq)
 
 data Clustalw2AlignmentEntrySlice = Clustalw2AlignmentEntrySlice
   {
     entrySequenceSliceIdentifier :: String,
-    entryAlignedSliceSequence :: String
+    entryAlignedSliceSequence :: String,
+    spacerLength :: Int
   }
   deriving (Show, Eq)
 
