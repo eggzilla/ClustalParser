@@ -155,5 +155,12 @@ genParserClustalw2EntrySlice = do
 parseClustalw2Alignment input = parse genParserClustalw2Alignment "genParserClustalw2Alignment" input
 
 -- |                      
-readClustalw2Alignment :: String -> IO (Either ParseError Clustalw2Alignment)                  
+readClustalw2Alignment :: String -> IO (Either ParseError Clustalw2Alignment)          
 readClustalw2Alignment filePath = parseFromFile genParserClustalw2Alignment filePath
+
+-- | 
+parseClustalw2Summary input = parse genParserClustalw2Summary "genParserClustalw2Summary" input
+
+-- |                      
+readClustalw2Summary :: String -> IO (Either ParseError Clustalw2Summary)          
+readClustalw2Summary filePath = parseFromFile genParserClustalw2Summary filePath
