@@ -28,7 +28,7 @@ genParserClustalw2Summary = do
   newline
   newline
   space
-  string "Clustal "
+  string "CLUSTAL "
   version <- many1 (noneOf " ")
   many1 (noneOf "\n")
   newline
@@ -37,7 +37,7 @@ genParserClustalw2Summary = do
   string "Sequence format is "
   sequenceFormat <- many1 (noneOf "\n")
   newline
-  sequenceParametersList <- many1 genParserSequenceParameters
+  sequenceParametersList <- (many1 (try genParserSequenceParameters))
   string "Start of Pairwise alignments" 
   newline
   string "Aligning..."
@@ -52,6 +52,7 @@ genParserClustalw2Summary = do
   string "There are "
   numberOfGroups <- many1 digit
   string " groups"
+  newline
   string "Start of Multiple Alignment"
   newline
   newline
@@ -75,9 +76,9 @@ genParserGroupSummary = do
   string "Group " 
   groupIndex <- many1 digit
   string ": Sequences:"
-  many1 spaces
+  many1 space
   sequenceNumber <- many1 digit
-  many1 spaces
+  many1 space
   string "Score:"
   groupScore <- many1 digit
   newline
@@ -89,7 +90,8 @@ genParserPairwiseAlignmentSummary = do
   firstSeqIndex <- many1 digit
   string ":"
   secondSeqIndex <- many1 digit
-  string ") Aligned. Score: "
+  string ") Aligned. Score:"
+  many1 space
   pairwiseScore <- many1 digit
   newline
   return $ PairwiseAlignmentSummary (readInt firstSeqIndex) (readInt secondSeqIndex) (readInt pairwiseScore)
