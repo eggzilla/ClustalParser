@@ -19,6 +19,94 @@ readDouble = read
 readInt :: String -> Int
 readInt = read
 
+Clustalw2Summary
+
+-- | Parse the input as Clustalw2Alignment datatype
+genParserClustalw2Summary :: GenParser Char st Clustalw2Summary
+genParserClustalw2Summary = do
+  newline
+  newline
+  newline
+  space
+  string "Clustal "
+  version <- many1 (noneOf " ")
+  many1 (noneOf "\n")
+  newline
+  newline
+  newline
+  string "Sequence format is "
+  sequenceFormat <- many1 (noneOf "\n")
+  newline
+  sequenceParameterList <- many1 genParserSequenceParameter
+  string "Start of Pairwise alignments" 
+  newline
+  string "Aligning..."
+  newline
+  newline
+  pairwiseAlignmentSummaryList <- many1 genPairwiseAlignmentSummary
+  string "Guide tree file created:   ["
+  guideTreeFileName <- many1 (noneOf "]")
+  char ']'
+  newline
+  newline
+  string "There are "
+  numberOfGroups <- many1 digits
+  string " groups"
+  string "Start of Multiple Alignment"
+  newline
+  newline
+  string "Aligning..."
+  newline
+  groupSummaryList <- many1 genParserGroupSummary
+  string "Alignment Score "
+  alignmentScore <- many1 digits
+  newline
+  newline
+  string "CLUSTAL-Alignment file created  ["
+  alignmentFileName <- many1 (noneOf "]")
+  char ']'
+  newline
+  newline
+  eof  
+  return 
+
+genParserGroupSummary :: GenParser Char st GroupSummary
+genParserGroupSummary = do
+  string "Group " 
+  groupIndex <- many1 digits
+  string ": Sequences:"
+  many1 spaces
+  sequenceNumber <- many1 digits
+  many1 spaces
+  string "Score:"
+  groupScore <- many1 digits
+  newline
+  return $ GroupSummary (readInt groupIndex) (readInt sequenceNumber) (readInt groupScore)
+
+genParserPairwiseAlignmentSummary :: GenParser Char st PairwiseAlignmentSummary
+genParserPairwiseAlignmentSummary = do
+  string "Sequences (" 
+  firstSeqIndex <- many1 digits
+  string ":"
+  secondSeqIndex <- many1 digits
+  string ") Aligned. Score: "
+  pairwiseScore <- many1 digits
+  newline
+  return $ PairwiseAlignmentSummary (readInt firstSeqIndex) (readInt secondSeqIndex) (readInt pairwiseScore)
+
+genParserSequenceParameters :: GenParser Char st SequenceParameters
+genParserSequenceParameters = do
+  string "Sequence " 
+  sequenceIndexParam <- many1 digits
+  string ": "
+  sequenceIdentifierParam <- many1 (noneOf " ")
+  spaces
+  sequenceLengthParam <- many1 digits
+  space
+  string "bp"
+  newline
+  return $ SequenceParameters (readInt sequenceIndexParam) sequenceIdentifierParam (readInt sequenceLengthParam)
+
 -- | Parse the input as Clustalw2Alignment datatype
 genParserClustalw2Alignment :: GenParser Char st Clustalw2Alignment
 genParserClustalw2Alignment = do
