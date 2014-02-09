@@ -3,6 +3,8 @@
 module Bio.Clustalw2Parser (
                        parseClustalw2Alignment,
                        readClustalw2Alignment,
+                       parseClustalw2Summary,
+                       readClustalw2Summary,
                        module Bio.Clustalw2Data
                       ) where
 
