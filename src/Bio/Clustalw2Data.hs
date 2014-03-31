@@ -37,7 +37,7 @@ data PairwiseAlignmentSummary = PairwiseAlignmentSummary
 data GroupSummary = GroupSummary
   {
      alignmentGroupIndex :: Int,
-     numberOfAlignedSequences :: Int,
+     numberOfAlignedSequences :: Maybe Int,
      groupScore :: Int
   }
   deriving (Show, Eq)
