@@ -80,10 +80,9 @@ genParserGroupSummary = do
   optional (string "Sequences:")
   many1 space
   sequenceNumber <- optionMaybe (many1 digit)
-  many1 space
-  optional (string "Score:")
-  groupScore <- optionMaybe (many1 digit)
-  optional (string "Delayed")
+  optional (many1 space)
+  (string "Score:") <|>  (string "Delayed")
+  groupScore <- optionMaybe (many1 digit) 
   newline
   return $ GroupSummary (readInt groupIndex) (liftM readInt sequenceNumber) (liftM readInt groupScore)
 
