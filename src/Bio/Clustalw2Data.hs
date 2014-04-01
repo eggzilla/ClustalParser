@@ -38,7 +38,7 @@ data GroupSummary = GroupSummary
   {
      alignmentGroupIndex :: Int,
      numberOfAlignedSequences :: Maybe Int,
-     groupScore :: Int
+     groupScore :: Maybe Int
   }
   deriving (Show, Eq)
 

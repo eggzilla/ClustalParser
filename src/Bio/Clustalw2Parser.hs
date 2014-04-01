@@ -75,14 +75,17 @@ genParserGroupSummary :: GenParser Char st GroupSummary
 genParserGroupSummary = do
   string "Group " 
   groupIndex <- many1 digit
-  string ": Sequences:"
+  string ":"
+  optional space
+  optional (string "Sequences:")
   many1 space
   sequenceNumber <- optionMaybe (many1 digit)
   many1 space
-  string "Score:"
-  groupScore <- many1 digit
+  optional (string "Score:")
+  groupScore <- optionMaybe (many1 digit)
+  optional (string "Delayed")
   newline
-  return $ GroupSummary (readInt groupIndex) (liftM readInt sequenceNumber) (readInt groupScore)
+  return $ GroupSummary (readInt groupIndex) (liftM readInt sequenceNumber) (liftM readInt groupScore)
 
 genParserPairwiseAlignmentSummary :: GenParser Char st PairwiseAlignmentSummary
 genParserPairwiseAlignmentSummary = do
