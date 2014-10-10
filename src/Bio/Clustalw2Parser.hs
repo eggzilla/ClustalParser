@@ -37,7 +37,7 @@ genParserClustalw2Summary = do
   string "Sequence format is "
   sequenceFormat <- many1 (noneOf "\n")
   newline
-  sequenceParametersList <- (many1 (try genParserSequenceParameters))
+  sequenceParametersList <- many1 (try genParserSequenceParameters)
   string "Start of Pairwise alignments" 
   newline
   string "Aligning..."
@@ -81,7 +81,7 @@ genParserGroupSummary = do
   many1 space
   sequenceNumber <- optionMaybe (many1 digit)
   optional (many1 space)
-  (string "Score:") <|>  (string "Delayed")
+  string "Score:" <|>  string "Delayed"
   groupScore <- optionMaybe (many1 digit) 
   newline
   return $ GroupSummary (readInt groupIndex) (liftM readInt sequenceNumber) (liftM readInt groupScore)
@@ -132,7 +132,7 @@ mergealignmentSlices slices = alignment
         mergedAlignmentEntries = map constructAlignmentEntries (zip sequenceIdentifiers mergedAlignmentSequenceEntries)
         conservationTrackSlices = map conservationTrackSlice slices
         mergedConservationTrack = concat conservationTrackSlices
-        alignment = (Clustalw2Alignment mergedAlignmentEntries mergedConservationTrack)
+        alignment = Clustalw2Alignment mergedAlignmentEntries mergedConservationTrack
 
 constructAlignmentEntries :: (String, String) -> Clustalw2AlignmentEntry
 constructAlignmentEntries (entryIdentifier,entrySequence) = Clustalw2AlignmentEntry entryIdentifier entrySequence
@@ -142,7 +142,7 @@ genParserClustalw2AlignmentSlice :: GenParser Char st Clustalw2AlignmentSlice
 genParserClustalw2AlignmentSlice = do
   entrySlices <- many1 genParserClustalw2EntrySlice
   --extract length of identifier and spacer to determine offset of conservation track
-  let offsetLenght = (length (entrySequenceSliceIdentifier (head entrySlices))) + (spacerLength (head entrySlices))
+  let offsetLenght = length (entrySequenceSliceIdentifier (head entrySlices)) + spacerLength (head entrySlices)
   spacerAndConservationTrackSlice <- many1 (noneOf "\n")
   let conservationTrackSlice = drop offsetLenght spacerAndConservationTrackSlice
   newline
@@ -157,16 +157,18 @@ genParserClustalw2EntrySlice = do
   newline
   return $ Clustalw2AlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
 
--- | 
-parseClustalw2Alignment input = parse genParserClustalw2Alignment "genParserClustalw2Alignment" input
+-- |
+parseClustalw2Alignment :: String -> Either ParseError Clustalw2Alignment 
+parseClustalw2Alignment = parse genParserClustalw2Alignment "genParserClustalw2Alignment"
 
 -- |                      
-readClustalw2Alignment :: String -> IO (Either ParseError Clustalw2Alignment)          
-readClustalw2Alignment filePath = parseFromFile genParserClustalw2Alignment filePath
+readClustalw2Alignment :: String -> IO (Either ParseError Clustalw2Alignment)   
+readClustalw2Alignment = parseFromFile genParserClustalw2Alignment
 
 -- | 
-parseClustalw2Summary input = parse genParserClustalw2Summary "genParserClustalw2Summary" input
+parseClustalw2Summary :: String -> Either ParseError Clustalw2Summary
+parseClustalw2Summary = parse genParserClustalw2Summary "genParserClustalw2Summary"
 
--- |                      
-readClustalw2Summary :: String -> IO (Either ParseError Clustalw2Summary)          
-readClustalw2Summary filePath = parseFromFile genParserClustalw2Summary filePath
+-- | Parse Clustalw2 format from file
+readClustalw2Summary :: String -> IO (Either ParseError Clustalw2Summary)       
+readClustalw2Summary = parseFromFile genParserClustalw2Summary
