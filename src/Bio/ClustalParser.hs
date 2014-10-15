@@ -21,7 +21,7 @@ readDouble = read
 readInt :: String -> Int
 readInt = read
 
--- | Parse the input as ClustalAlignment datatype
+-- | Parse the input as ClustalSummary datatype
 genParserClustalSummary :: GenParser Char st ClustalSummary
 genParserClustalSummary = do
   newline
@@ -137,7 +137,6 @@ mergealignmentSlices slices = alignment
 constructAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
 constructAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry entryIdentifier entrySequence
 
--- |        
 genParserClustalAlignmentSlice :: GenParser Char st ClustalAlignmentSlice
 genParserClustalAlignmentSlice = do
   entrySlices <- many1 genParserClustalEntrySlice
@@ -157,18 +156,18 @@ genParserClustalEntrySlice = do
   newline
   return $ ClustalAlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
 
--- |
+-- | Parse Clustal alignment (.aln) from String
 parseClustalAlignment :: String -> Either ParseError ClustalAlignment 
 parseClustalAlignment = parse genParserClustalAlignment "genParserClustalAlignment"
 
--- |                      
+-- | Parse Clustal alignment (.aln) from filehandle                  
 readClustalAlignment :: String -> IO (Either ParseError ClustalAlignment)   
 readClustalAlignment = parseFromFile genParserClustalAlignment
 
--- | 
+-- |  Parse Clustal summary (printed to STDOUT) from String
 parseClustalSummary :: String -> Either ParseError ClustalSummary
 parseClustalSummary = parse genParserClustalSummary "genParserClustalSummary"
 
--- | Parse Clustal format from file
+-- | Parse Clustal summary (printed to STDOUT) from file
 readClustalSummary :: String -> IO (Either ParseError ClustalSummary)       
 readClustalSummary = parseFromFile genParserClustalSummary

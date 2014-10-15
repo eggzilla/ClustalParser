@@ -3,7 +3,7 @@
 
 module Bio.ClustalData where
     
--- | 
+-- | Data type for clustal summary, containing information about the alignment process, usually printed to STDOUT
 data ClustalSummary = ClustalSummary
   {
     clustalw2version :: String,
@@ -43,7 +43,7 @@ data GroupSummary = GroupSummary
   deriving (Show, Eq)
 
 
--- | Data structure for 
+-- | Data structure for Clustal alignment format
 data ClustalAlignment = ClustalAlignment
   { 
     alignmentEntries :: [ClustalAlignmentEntry],
