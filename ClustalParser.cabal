@@ -5,9 +5,15 @@ name:                ClustalParser
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.0.1
+version:             1.0.0
 synopsis:            Libary for parsing Clustal tools output
-description:         Currently contains parsers and datatypes for: clustalw2
+description:         Currently contains parsers and datatypes for: clustalw2, clustalo
+                     .
+                     For more information on clustal Tools refer to <http://www.clustal.org/>
+                     .
+                     ClustalW2 is a general purpose DNA or protein multiple sequence alignment program for three or more sequences.
+                     .
+                     Clustal Omega is a new multiple sequence alignment program that uses seeded guide trees and HMM profile-profile techniques to generate alignments between three or more sequences.
                      
 license:             GPL
 license-file:        LICENSE
@@ -24,17 +30,20 @@ source-repository head
 
 source-repository this
   type:     git
-  location: https://github.com/eggzilla/ClustalParser/tree/v0.0.1
-  tag:      v0.0.1
+  location: https://github.com/eggzilla/ClustalParser/tree/v1.0.0
+  tag:      1.0.0
 
 library
   -- Modules exported by the library.
   exposed-modules:   Bio.ClustalParser
-  other-modules:     Bio.Clustalw2Data
-                     Bio.Clustalw2Parser
+  other-modules:     Bio.ClustalData
+
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.5 && <5, parsec
   
   -- Directories containing source files.
   hs-source-dirs:      src
   
+executable ClustalParserTest
+  main-is:          ClustalParserTest.hs
+  build-depends:    base >= 4 && <= 5, cmdargs, ClustalParser
