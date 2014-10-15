@@ -1,10 +1,10 @@
 -- | This module contains data structures for the Clustal tools 
---   For more information on Clustal tools consult: <>
+--   For more information on Clustal tools consult: <http://www.clustal.org/>
 
-module Bio.Clustalw2Data where
+module Bio.ClustalData where
     
 -- | 
-data Clustalw2Summary = Clustalw2Summary
+data ClustalSummary = ClustalSummary
   {
     clustalw2version :: String,
     sequenceFormat :: String,
@@ -44,28 +44,28 @@ data GroupSummary = GroupSummary
 
 
 -- | Data structure for 
-data Clustalw2Alignment = Clustalw2Alignment
+data ClustalAlignment = ClustalAlignment
   { 
-    alignmentEntries :: [Clustalw2AlignmentEntry],
+    alignmentEntries :: [ClustalAlignmentEntry],
     conservationTrack :: String
   }
   deriving (Show, Eq)
 
-data Clustalw2AlignmentEntry = Clustalw2AlignmentEntry
+data ClustalAlignmentEntry = ClustalAlignmentEntry
   {
     entrySequenceIdentifier :: String,
     entryAlignedSequence :: String
   }
   deriving (Show, Eq)
 
-data Clustalw2AlignmentSlice = Clustalw2AlignmentSlice
+data ClustalAlignmentSlice = ClustalAlignmentSlice
   {
-    entrySlices :: [Clustalw2AlignmentEntrySlice],
+    entrySlices :: [ClustalAlignmentEntrySlice],
     conservationTrackSlice :: String
   }
   deriving (Show, Eq)
 
-data Clustalw2AlignmentEntrySlice = Clustalw2AlignmentEntrySlice
+data ClustalAlignmentEntrySlice = ClustalAlignmentEntrySlice
   {
     entrySequenceSliceIdentifier :: String,
     entryAlignedSliceSequence :: String,
@@ -73,13 +73,13 @@ data Clustalw2AlignmentEntrySlice = Clustalw2AlignmentEntrySlice
   }
   deriving (Show, Eq)
 
-data Clustalw2GuideTree = Clustalw2GuideTree
+data ClustalGuideTree = ClustalGuideTree
   { 
-    guideTreeEntries :: [Clustalw2GuideTreeEntry]
+    guideTreeEntries :: [ClustalGuideTreeEntry]
   }
   deriving (Show, Eq)
 
-data Clustalw2GuideTreeEntry = Clustalw2GuideTreeEntry
+data ClustalGuideTreeEntry = ClustalGuideTreeEntry
   { 
     entryDesignation :: String,
     entryDistance :: Double

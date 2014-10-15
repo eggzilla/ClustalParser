@@ -1,14 +1,14 @@
--- | Parse Clustalw2 output
+-- | Parse Clustal output
 
-module Bio.Clustalw2Parser (
-                       parseClustalw2Alignment,
-                       readClustalw2Alignment,
-                       parseClustalw2Summary,
-                       readClustalw2Summary,
-                       module Bio.Clustalw2Data
+module Bio.ClustalParser (
+                       parseClustalAlignment,
+                       readClustalAlignment,
+                       parseClustalSummary,
+                       readClustalSummary,
+                       module Bio.ClustalData
                       ) where
 
-import Bio.Clustalw2Data
+import Bio.ClustalData
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Token
 import Text.ParserCombinators.Parsec.Language (emptyDef)    
@@ -21,9 +21,9 @@ readDouble = read
 readInt :: String -> Int
 readInt = read
 
--- | Parse the input as Clustalw2Alignment datatype
-genParserClustalw2Summary :: GenParser Char st Clustalw2Summary
-genParserClustalw2Summary = do
+-- | Parse the input as ClustalAlignment datatype
+genParserClustalSummary :: GenParser Char st ClustalSummary
+genParserClustalSummary = do
   newline
   newline
   newline
@@ -69,7 +69,7 @@ genParserClustalw2Summary = do
   newline
   newline
   eof  
-  return $ Clustalw2Summary version sequenceFormat sequenceParametersList pairwiseAlignmentSummaryList guideTreeFileName (readInt numberOfGroups) groupSummaryList (readInt alignmentScore) alignmentFileName
+  return $ ClustalSummary version sequenceFormat sequenceParametersList pairwiseAlignmentSummaryList guideTreeFileName (readInt numberOfGroups) groupSummaryList (readInt alignmentScore) alignmentFileName
 
 genParserGroupSummary :: GenParser Char st GroupSummary
 genParserGroupSummary = do
@@ -111,18 +111,18 @@ genParserSequenceParameters = do
   newline
   return $ SequenceParameters (readInt sequenceIndexParam) sequenceIdentifierParam (readInt sequenceLengthParam)
 
--- | Parse the input as Clustalw2Alignment datatype
-genParserClustalw2Alignment :: GenParser Char st Clustalw2Alignment
-genParserClustalw2Alignment = do
+-- | Parse the input as ClustalAlignment datatype
+genParserClustalAlignment :: GenParser Char st ClustalAlignment
+genParserClustalAlignment = do
   many1 (noneOf "\n")
   newline
   newline
   newline
-  alignmentSlices <- many1 genParserClustalw2AlignmentSlice
+  alignmentSlices <- many1 genParserClustalAlignmentSlice
   eof  
   return (mergealignmentSlices alignmentSlices)
 
-mergealignmentSlices :: [Clustalw2AlignmentSlice] -> Clustalw2Alignment
+mergealignmentSlices :: [ClustalAlignmentSlice] -> ClustalAlignment
 mergealignmentSlices slices = alignment
   where entrySlicesList = map entrySlices slices -- list of lists of entry slices
         sequenceIdentifiers = map entrySequenceSliceIdentifier (head entrySlicesList)
@@ -132,43 +132,43 @@ mergealignmentSlices slices = alignment
         mergedAlignmentEntries = map constructAlignmentEntries (zip sequenceIdentifiers mergedAlignmentSequenceEntries)
         conservationTrackSlices = map conservationTrackSlice slices
         mergedConservationTrack = concat conservationTrackSlices
-        alignment = Clustalw2Alignment mergedAlignmentEntries mergedConservationTrack
+        alignment = ClustalAlignment mergedAlignmentEntries mergedConservationTrack
 
-constructAlignmentEntries :: (String, String) -> Clustalw2AlignmentEntry
-constructAlignmentEntries (entryIdentifier,entrySequence) = Clustalw2AlignmentEntry entryIdentifier entrySequence
+constructAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
+constructAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry entryIdentifier entrySequence
 
 -- |        
-genParserClustalw2AlignmentSlice :: GenParser Char st Clustalw2AlignmentSlice
-genParserClustalw2AlignmentSlice = do
-  entrySlices <- many1 genParserClustalw2EntrySlice
+genParserClustalAlignmentSlice :: GenParser Char st ClustalAlignmentSlice
+genParserClustalAlignmentSlice = do
+  entrySlices <- many1 genParserClustalEntrySlice
   --extract length of identifier and spacer to determine offset of conservation track
   let offsetLenght = length (entrySequenceSliceIdentifier (head entrySlices)) + spacerLength (head entrySlices)
   spacerAndConservationTrackSlice <- many1 (noneOf "\n")
   let conservationTrackSlice = drop offsetLenght spacerAndConservationTrackSlice
   newline
   optional newline
-  return $ Clustalw2AlignmentSlice entrySlices conservationTrackSlice
+  return $ ClustalAlignmentSlice entrySlices conservationTrackSlice
 
-genParserClustalw2EntrySlice :: GenParser Char st Clustalw2AlignmentEntrySlice
-genParserClustalw2EntrySlice = do
+genParserClustalEntrySlice :: GenParser Char st ClustalAlignmentEntrySlice
+genParserClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   spacer <- many1 (char ' ')
   sliceSequence <- many1 (noneOf "\n")
   newline
-  return $ Clustalw2AlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
+  return $ ClustalAlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
 
 -- |
-parseClustalw2Alignment :: String -> Either ParseError Clustalw2Alignment 
-parseClustalw2Alignment = parse genParserClustalw2Alignment "genParserClustalw2Alignment"
+parseClustalAlignment :: String -> Either ParseError ClustalAlignment 
+parseClustalAlignment = parse genParserClustalAlignment "genParserClustalAlignment"
 
 -- |                      
-readClustalw2Alignment :: String -> IO (Either ParseError Clustalw2Alignment)   
-readClustalw2Alignment = parseFromFile genParserClustalw2Alignment
+readClustalAlignment :: String -> IO (Either ParseError ClustalAlignment)   
+readClustalAlignment = parseFromFile genParserClustalAlignment
 
 -- | 
-parseClustalw2Summary :: String -> Either ParseError Clustalw2Summary
-parseClustalw2Summary = parse genParserClustalw2Summary "genParserClustalw2Summary"
+parseClustalSummary :: String -> Either ParseError ClustalSummary
+parseClustalSummary = parse genParserClustalSummary "genParserClustalSummary"
 
--- | Parse Clustalw2 format from file
-readClustalw2Summary :: String -> IO (Either ParseError Clustalw2Summary)       
-readClustalw2Summary = parseFromFile genParserClustalw2Summary
+-- | Parse Clustal format from file
+readClustalSummary :: String -> IO (Either ParseError ClustalSummary)       
+readClustalSummary = parseFromFile genParserClustalSummary
