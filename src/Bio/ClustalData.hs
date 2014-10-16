@@ -42,7 +42,6 @@ data GroupSummary = GroupSummary
   }
   deriving (Show, Eq)
 
-
 -- | Data structure for Clustal alignment format
 data ClustalAlignment = ClustalAlignment
   { 
@@ -73,16 +72,26 @@ data ClustalAlignmentEntrySlice = ClustalAlignmentEntrySlice
   }
   deriving (Show, Eq)
 
-data ClustalGuideTree = ClustalGuideTree
+-- | Data structure for structural Clustal alignment format
+data StructuralClustalAlignment = StructuralClustalAlignment
   { 
-    guideTreeEntries :: [ClustalGuideTreeEntry]
+    structuralAlignmentEntries :: [ClustalAlignmentEntry],
+    secondaryStructureTrack :: String,
+    energy :: Double
   }
   deriving (Show, Eq)
 
-data ClustalGuideTreeEntry = ClustalGuideTreeEntry
-  { 
-    entryDesignation :: String,
-    entryDistance :: Double
+data StructuralClustalAlignmentSlice = StructuralClustalAlignmentSlice
+  {
+    structuralEntrySlices :: [StructuralClustalAlignmentEntrySlice]
   }
   deriving (Show, Eq)
+
+data StructuralClustalAlignmentEntrySlice = StructuralClustalAlignmentEntrySlice
+  {
+    structuralEntrySequenceSliceIdentifier :: String,
+    structuralEntryAlignedSliceSequence :: String
+  }
+  deriving (Show, Eq)
+
 

@@ -156,6 +156,86 @@ genParserClustalEntrySlice = do
   newline
   return $ ClustalAlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
 
+--Structural Clustal Parser functions
+
+-- | Parse the input as ClustalAlignment datatype
+genParserStructuralClustalAlignment :: GenParser Char st StructuralClustalAlignment
+genParserStructuralClustalAlignment = do
+  genParseMlocarnaHeader
+  newline
+  newline
+  newline
+  alignmentSlices <- many1 genParserStructuralClustalAlignmentSlice
+  secondaryStructure <- genSecondaryStructure  
+  energy <- genParseEnergy
+  eof  
+  return (mergeStructuralAlignmentSlices alignmentSlices secondaryStructure energy)
+
+genSecondaryStructure :: GenParser Char st String
+genSecondaryStructure = do
+  string "alifold"
+  many1 space
+  secondaryStructure <- many1 (oneOf ".()")
+  space
+  return secondaryStructure
+
+genParseEnergy :: GenParser Char st Double
+genParseEnergy = do
+  string "("
+  many1 space 
+  energy <- many1 (noneOf " ")
+  space
+  many1 (noneOf " ")
+  newline  
+  return (readDouble energy)
+
+genParseMlocarnaHeader :: GenParser Char st String
+genParseMlocarnaHeader = do
+  string "mLocarna"
+  many1 (noneOf "\n")
+  string "Copyright"
+  many1 (noneOf "\n")
+  newline
+  newline  
+  many1 genParseAlignmentProcessStep
+  return ""
+
+genParseAlignmentProcessStep :: GenParser Char st String
+genParseAlignmentProcessStep = do
+  many1 (noneOf ".")
+  string ("...")
+  newline
+  return ""
+
+mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
+mergeStructuralAlignmentSlices slices secondaryStructure energy = alignment
+  where entrySlicesList = map structuralEntrySlices slices -- list of lists of entry slices
+        sequenceIdentifiers = map structuralEntrySequenceSliceIdentifier (head entrySlicesList)
+        alignmentEntriesListBySlice =  map (map structuralEntryAlignedSliceSequence) entrySlicesList  
+        transposedAlignmentEntriesListbySlice = transpose alignmentEntriesListBySlice
+        mergedAlignmentSequenceEntries = map concat transposedAlignmentEntriesListbySlice
+        mergedAlignmentEntries = map constructStructuralAlignmentEntries (zip sequenceIdentifiers mergedAlignmentSequenceEntries)
+        alignment = StructuralClustalAlignment mergedAlignmentEntries secondaryStructure energy 
+
+constructStructuralAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
+constructStructuralAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry entryIdentifier entrySequence
+
+genParserStructuralClustalAlignmentSlice :: GenParser Char st StructuralClustalAlignmentSlice
+genParserStructuralClustalAlignmentSlice = do
+  entrySlices <- many1 genParserStructuralClustalEntrySlice
+  optional newline
+  return $ StructuralClustalAlignmentSlice entrySlices
+
+genParserStructuralClustalEntrySlice :: GenParser Char st StructuralClustalAlignmentEntrySlice
+genParserStructuralClustalEntrySlice = do
+  sliceIdentifier <- many1 (noneOf " ")
+  many1 (char ' ')
+  sliceSequence <- many1 (noneOf "\n")
+  newline
+  return $ StructuralClustalAlignmentEntrySlice sliceIdentifier sliceSequence
+
+-- exported functions
+
 -- | Parse Clustal alignment (.aln) from String
 parseClustalAlignment :: String -> Either ParseError ClustalAlignment 
 parseClustalAlignment = parse genParserClustalAlignment "genParserClustalAlignment"
@@ -163,6 +243,14 @@ parseClustalAlignment = parse genParserClustalAlignment "genParserClustalAlignme
 -- | Parse Clustal alignment (.aln) from filehandle                  
 readClustalAlignment :: String -> IO (Either ParseError ClustalAlignment)   
 readClustalAlignment = parseFromFile genParserClustalAlignment
+
+-- | Parse Clustal alignment (.aln) with secondary structure in dot-bracket notation from String (as produced by mlocarna)
+parseStructuralClustalAlignment :: String -> Either ParseError StructuralClustalAlignment 
+parseStructuralClustalAlignment = parse genParserStructuralClustalAlignment "genParserClustalAlignment"
+
+-- | Parse Clustal alignment (.aln) with secondary structure in dot-bracket notation from filehandle (as produced by mlocarna)                  
+readStructuralClustalAlignment :: String -> IO (Either ParseError StructuralClustalAlignment)   
+readStructuralClustalAlignment = parseFromFile genParserStructuralClustalAlignment
 
 -- |  Parse Clustal summary (printed to STDOUT) from String
 parseClustalSummary :: String -> Either ParseError ClustalSummary
