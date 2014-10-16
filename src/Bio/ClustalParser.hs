@@ -3,6 +3,8 @@
 module Bio.ClustalParser (
                        parseClustalAlignment,
                        readClustalAlignment,
+                       parseStructuralClustalAlignment,
+                       readStructuralClustalAlignment,
                        parseClustalSummary,
                        readClustalSummary,
                        module Bio.ClustalData
@@ -162,10 +164,7 @@ genParserClustalEntrySlice = do
 genParserStructuralClustalAlignment :: GenParser Char st StructuralClustalAlignment
 genParserStructuralClustalAlignment = do
   genParseMlocarnaHeader
-  newline
-  newline
-  newline
-  alignmentSlices <- many1 genParserStructuralClustalAlignmentSlice
+  alignmentSlices <- many1 (try genParserStructuralClustalAlignmentSlice)
   secondaryStructure <- genSecondaryStructure  
   energy <- genParseEnergy
   eof  
@@ -182,28 +181,32 @@ genSecondaryStructure = do
 genParseEnergy :: GenParser Char st Double
 genParseEnergy = do
   string "("
-  many1 space 
+  many space 
   energy <- many1 (noneOf " ")
-  space
-  many1 (noneOf " ")
+  optional space
+  char ('=')
+  many1 (noneOf "\n")
   newline  
   return (readDouble energy)
 
 genParseMlocarnaHeader :: GenParser Char st String
 genParseMlocarnaHeader = do
-  string "mLocarna"
+  string "mLo"
   many1 (noneOf "\n")
+  newline
   string "Copyright"
   many1 (noneOf "\n")
   newline
   newline  
   many1 genParseAlignmentProcessStep
+  newline
+  newline
   return ""
 
 genParseAlignmentProcessStep :: GenParser Char st String
 genParseAlignmentProcessStep = do
-  many1 (noneOf ".")
-  string ("...")
+  many1 (noneOf ".\n")
+  choice [try (string ("... ")), try (string ("..."))]
   newline
   return ""
 
@@ -222,7 +225,7 @@ constructStructuralAlignmentEntries (entryIdentifier,entrySequence) = ClustalAli
 
 genParserStructuralClustalAlignmentSlice :: GenParser Char st StructuralClustalAlignmentSlice
 genParserStructuralClustalAlignmentSlice = do
-  entrySlices <- many1 genParserStructuralClustalEntrySlice
+  entrySlices <- many1 (try genParserStructuralClustalEntrySlice)
   optional newline
   return $ StructuralClustalAlignmentSlice entrySlices
 
@@ -230,7 +233,7 @@ genParserStructuralClustalEntrySlice :: GenParser Char st StructuralClustalAlign
 genParserStructuralClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   many1 (char ' ')
-  sliceSequence <- many1 (noneOf "\n")
+  sliceSequence <- many1 (oneOf "UAGCT-")
   newline
   return $ StructuralClustalAlignmentEntrySlice sliceIdentifier sliceSequence
 
