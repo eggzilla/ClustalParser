@@ -40,10 +40,14 @@ library
 
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.5 && <5, parsec
-  
+  -- compiler options
+  ghc-options:         -Wall -O2
   -- Directories containing source files.
   hs-source-dirs:      src
   
 executable ClustalParserTest
   main-is:          ClustalParserTest.hs
   build-depends:    base >= 4 && <= 5, cmdargs, ClustalParser
+  -- compiler options  
+  ghc-options:         -Wall -O2
+  
