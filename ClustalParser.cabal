@@ -5,7 +5,7 @@ name:                ClustalParser
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.0.0
+version:             1.0.1
 synopsis:            Libary for parsing Clustal tools output
 description:         Currently contains parsers and datatypes for: clustalw2, clustalo
                      .
@@ -30,8 +30,8 @@ source-repository head
 
 source-repository this
   type:     git
-  location: https://github.com/eggzilla/ClustalParser/tree/v1.0.0
-  tag:      1.0.0
+  location: https://github.com/eggzilla/ClustalParser/tree/1.0.1
+  tag:      1.0.1
 
 library
   -- Modules exported by the library.
@@ -41,7 +41,7 @@ library
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.5 && <5, parsec
   -- compiler options
-  ghc-options:         -Wall -O2
+  ghc-options:         -Wall -O2 -fno-warn-unused-do-bind
   -- Directories containing source files.
   hs-source-dirs:      src
   

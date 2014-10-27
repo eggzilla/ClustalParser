@@ -1,5 +1,5 @@
 -- | Parse Clustal output
-
+--   For more information on Clustal tools consult: <http://www.clustal.org/>
 module Bio.ClustalParser (
                        parseClustalAlignment,
                        readClustalAlignment,
@@ -11,9 +11,7 @@ module Bio.ClustalParser (
                       ) where
 
 import Bio.ClustalData
-import Text.ParserCombinators.Parsec
-import Text.ParserCombinators.Parsec.Token
-import Text.ParserCombinators.Parsec.Language (emptyDef)    
+import Text.ParserCombinators.Parsec    
 import Control.Monad
 import Data.List
 
@@ -37,7 +35,7 @@ genParserClustalSummary = do
   newline
   newline
   string "Sequence format is "
-  sequenceFormat <- many1 (noneOf "\n")
+  sequenceFormat' <- many1 (noneOf "\n")
   newline
   sequenceParametersList <- many1 (try genParserSequenceParameters)
   string "Start of Pairwise alignments" 
@@ -47,7 +45,7 @@ genParserClustalSummary = do
   newline
   pairwiseAlignmentSummaryList <- many1 genParserPairwiseAlignmentSummary
   string "Guide tree file created:   ["
-  guideTreeFileName <- many1 (noneOf "]")
+  guideTreeFileName' <- many1 (noneOf "]")
   char ']'
   newline
   newline
@@ -62,16 +60,16 @@ genParserClustalSummary = do
   newline
   groupSummaryList <- many1 genParserGroupSummary
   string "Alignment Score "
-  alignmentScore <- many1 digit
+  alignmentScore' <- many1 digit
   newline
   newline
   string "CLUSTAL-Alignment file created  ["
-  alignmentFileName <- many1 (noneOf "]")
+  alignmentFileName' <- many1 (noneOf "]")
   char ']'
   newline
   newline
   eof  
-  return $ ClustalSummary version sequenceFormat sequenceParametersList pairwiseAlignmentSummaryList guideTreeFileName (readInt numberOfGroups) groupSummaryList (readInt alignmentScore) alignmentFileName
+  return $ ClustalSummary version sequenceFormat' sequenceParametersList pairwiseAlignmentSummaryList guideTreeFileName' (readInt numberOfGroups) groupSummaryList (readInt alignmentScore') alignmentFileName'
 
 genParserGroupSummary :: GenParser Char st GroupSummary
 genParserGroupSummary = do
@@ -84,9 +82,9 @@ genParserGroupSummary = do
   sequenceNumber <- optionMaybe (many1 digit)
   optional (many1 space)
   string "Score:" <|>  string "Delayed"
-  groupScore <- optionMaybe (many1 digit) 
+  groupScore' <- optionMaybe (many1 digit) 
   newline
-  return $ GroupSummary (readInt groupIndex) (liftM readInt sequenceNumber) (liftM readInt groupScore)
+  return $ GroupSummary (readInt groupIndex) (liftM readInt sequenceNumber) (liftM readInt groupScore')
 
 genParserPairwiseAlignmentSummary :: GenParser Char st PairwiseAlignmentSummary
 genParserPairwiseAlignmentSummary = do
@@ -141,14 +139,14 @@ constructAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntr
 
 genParserClustalAlignmentSlice :: GenParser Char st ClustalAlignmentSlice
 genParserClustalAlignmentSlice = do
-  entrySlices <- many1 genParserClustalEntrySlice
+  entrySlices' <- many1 genParserClustalEntrySlice
   --extract length of identifier and spacer to determine offset of conservation track
-  let offsetLenght = length (entrySequenceSliceIdentifier (head entrySlices)) + spacerLength (head entrySlices)
+  let offsetLenght = length (entrySequenceSliceIdentifier (head entrySlices')) + spacerLength (head entrySlices')
   spacerAndConservationTrackSlice <- many1 (noneOf "\n")
-  let conservationTrackSlice = drop offsetLenght spacerAndConservationTrackSlice
+  let conservationTrackSlice' = drop offsetLenght spacerAndConservationTrackSlice
   newline
   optional newline
-  return $ ClustalAlignmentSlice entrySlices conservationTrackSlice
+  return $ ClustalAlignmentSlice entrySlices' conservationTrackSlice'
 
 genParserClustalEntrySlice :: GenParser Char st ClustalAlignmentEntrySlice
 genParserClustalEntrySlice = do
@@ -160,15 +158,15 @@ genParserClustalEntrySlice = do
 
 --Structural Clustal Parser functions
 
--- | Parse the input as ClustalAlignment datatype
+-- | Parse the input as ClustalAlignment datatype as used in mlocarna
 genParserStructuralClustalAlignment :: GenParser Char st StructuralClustalAlignment
 genParserStructuralClustalAlignment = do
   genParseMlocarnaHeader
   alignmentSlices <- many1 (try genParserStructuralClustalAlignmentSlice)
   secondaryStructure <- genSecondaryStructure  
-  energy <- genParseEnergy
+  energy' <- genParseEnergy
   eof  
-  return (mergeStructuralAlignmentSlices alignmentSlices secondaryStructure energy)
+  return (mergeStructuralAlignmentSlices alignmentSlices secondaryStructure energy')
 
 genSecondaryStructure :: GenParser Char st String
 genSecondaryStructure = do
@@ -182,12 +180,12 @@ genParseEnergy :: GenParser Char st Double
 genParseEnergy = do
   string "("
   many space 
-  energy <- many1 (noneOf " ")
+  energy' <- many1 (noneOf " ")
   optional space
   char ('=')
   many1 (noneOf "\n")
   newline  
-  return (readDouble energy)
+  return (readDouble energy')
 
 genParseMlocarnaHeader :: GenParser Char st String
 genParseMlocarnaHeader = do
@@ -211,23 +209,23 @@ genParseAlignmentProcessStep = do
   return ""
 
 mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
-mergeStructuralAlignmentSlices slices secondaryStructure energy = alignment
+mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
   where entrySlicesList = map structuralEntrySlices slices -- list of lists of entry slices
         sequenceIdentifiers = map structuralEntrySequenceSliceIdentifier (head entrySlicesList)
         alignmentEntriesListBySlice =  map (map structuralEntryAlignedSliceSequence) entrySlicesList  
         transposedAlignmentEntriesListbySlice = transpose alignmentEntriesListBySlice
         mergedAlignmentSequenceEntries = map concat transposedAlignmentEntriesListbySlice
         mergedAlignmentEntries = map constructStructuralAlignmentEntries (zip sequenceIdentifiers mergedAlignmentSequenceEntries)
-        alignment = StructuralClustalAlignment mergedAlignmentEntries secondaryStructure energy 
+        alignment = StructuralClustalAlignment mergedAlignmentEntries secondaryStructure energy' 
 
 constructStructuralAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
 constructStructuralAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry entryIdentifier entrySequence
 
 genParserStructuralClustalAlignmentSlice :: GenParser Char st StructuralClustalAlignmentSlice
 genParserStructuralClustalAlignmentSlice = do
-  entrySlices <- many1 (try genParserStructuralClustalEntrySlice)
+  entrySlices' <- many1 (try genParserStructuralClustalEntrySlice)
   optional newline
-  return $ StructuralClustalAlignmentSlice entrySlices
+  return $ StructuralClustalAlignmentSlice entrySlices'
 
 genParserStructuralClustalEntrySlice :: GenParser Char st StructuralClustalAlignmentEntrySlice
 genParserStructuralClustalEntrySlice = do
