@@ -231,7 +231,7 @@ genParserStructuralClustalEntrySlice :: GenParser Char st StructuralClustalAlign
 genParserStructuralClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   many1 (char ' ')
-  sliceSequence <- many1 (oneOf "UAGCT-")
+  sliceSequence <- many1 (oneOf "NUAGCT-")
   newline
   return $ StructuralClustalAlignmentEntrySlice (filter (/='\n') sliceIdentifier) sliceSequence
 
