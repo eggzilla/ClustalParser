@@ -152,7 +152,7 @@ genParserClustalEntrySlice :: GenParser Char st ClustalAlignmentEntrySlice
 genParserClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   spacer <- many1 (char ' ')
-  sliceSequence <- many1 (noneOf "\n")
+  sliceSequence <- many1 (oneOf "NYRUAGCT-")
   newline
   return $ ClustalAlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
 
@@ -231,7 +231,7 @@ genParserStructuralClustalEntrySlice :: GenParser Char st StructuralClustalAlign
 genParserStructuralClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   many1 (char ' ')
-  sliceSequence <- many1 (oneOf "NUAGCT-")
+  sliceSequence <- many1 (oneOf "NYRUAGCT-")
   newline
   return $ StructuralClustalAlignmentEntrySlice (filter (/='\n') sliceIdentifier) sliceSequence
 
