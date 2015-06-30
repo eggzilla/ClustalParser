@@ -70,10 +70,10 @@ showAlignmentBlock :: Int -> Int -> [ClustalAlignmentEntry] -> String -> String
 showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack = blockString
   where blockString = entries ++ extraTrack ++ "\n"
         entries = concatMap (showAlignmentLine longestSequenceIdLength currentWindowPosition) _alignmentEntries
-        extraTrack = concat (replicate longestSequenceIdLength " ") ++ V.toList (V.slice currentWindowPosition (currentWindowPosition + 60)  (V.fromList _conservationTrack)) ++ "\n"
+        extraTrack = concat (replicate longestSequenceIdLength " ") ++ V.toList (V.slice currentWindowPosition 60  (V.fromList _conservationTrack)) ++ "\n"
 
 showAlignmentLine :: Int -> Int -> ClustalAlignmentEntry -> String
-showAlignmentLine longestSequenceIdLength currentWindowPosition _alignmentEntry = (entrySequenceIdentifier _alignmentEntry) ++ concat (replicate (longestSequenceIdLength - length (entrySequenceIdentifier _alignmentEntry)) " ") ++ V.toList (V.slice currentWindowPosition (currentWindowPosition + 60)  (V.fromList (entryAlignedSequence _alignmentEntry))) ++ "\n"
+showAlignmentLine longestSequenceIdLength currentWindowPosition _alignmentEntry = (entrySequenceIdentifier _alignmentEntry) ++ concat (replicate (longestSequenceIdLength - length (entrySequenceIdentifier _alignmentEntry)) " ") ++ V.toList (V.slice currentWindowPosition 60  (V.fromList (entryAlignedSequence _alignmentEntry))) ++ "\n"
 
 data ClustalAlignmentEntry = ClustalAlignmentEntry
   {
