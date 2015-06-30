@@ -118,14 +118,14 @@ genParserClustalAlignment = do
   newline
   newline
   newline
-  alignmentSlices <- many1 genParserClustalAlignmentSlice
+  alignmentSlices <- many1 (try genParserClustalAlignmentSlice)
   eof  
   return (mergealignmentSlices alignmentSlices)
 
 mergealignmentSlices :: [ClustalAlignmentSlice] -> ClustalAlignment
 mergealignmentSlices slices = alignment
   where entrySlicesList = map entrySlices slices -- list of lists of entry slices
-        sequenceIdentifiers = map entrySequenceSliceIdentifier (head entrySlicesList)
+        sequenceIdentifiers = nub (map entrySequenceSliceIdentifier (head entrySlicesList))
         alignmentEntriesListBySlice =  map (map entryAlignedSliceSequence) entrySlicesList  
         transposedAlignmentEntriesListbySlice = transpose alignmentEntriesListBySlice
         mergedAlignmentSequenceEntries = map concat transposedAlignmentEntriesListbySlice
