@@ -2,6 +2,7 @@
 --   For more information on Clustal tools consult: <http://www.clustal.org/>
 
 module Bio.ClustalData where
+import qualified Data.Vector as V
     
 -- | Data type for clustal summary, containing information about the alignment process, usually printed to STDOUT
 data ClustalSummary = ClustalSummary
@@ -48,7 +49,31 @@ data ClustalAlignment = ClustalAlignment
     alignmentEntries :: [ClustalAlignmentEntry],
     conservationTrack :: String
   }
-  deriving (Show, Eq)
+  deriving (Eq)
+
+instance Show ClustalAlignment where
+  show (ClustalAlignment _alignmentEntries _conservationTrack ) 
+    | not (null _alignmentEntries) = header ++ alignmentString
+    | otherwise = header
+    where header = "CLUSTAL W (1.8) multiple sequence alignment\n\n\n" 
+          longestSequenceIdLength =  (maximum (map length (map entrySequenceIdentifier _alignmentEntries))) + 1
+          totalSequenceLength = length (entryAlignedSequence (head _alignmentEntries))
+          alignmentString = showAlignment totalSequenceLength longestSequenceIdLength 0 _alignmentEntries _conservationTrack
+
+showAlignment :: Int -> Int -> Int -> [ClustalAlignmentEntry] -> String -> String
+showAlignment totalSequenceLength longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack
+  | totalSequenceLength == 0 = [] 
+  | currentWindowPosition <= totalSequenceLength = showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack ++ (showAlignment totalSequenceLength longestSequenceIdLength (currentWindowPosition + 60) _alignmentEntries _conservationTrack)
+  | otherwise = "" 
+
+showAlignmentBlock :: Int -> Int -> [ClustalAlignmentEntry] -> String -> String
+showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack = blockString
+  where blockString = entries ++ extraTrack ++ "\n"
+        entries = concatMap (showAlignmentLine longestSequenceIdLength currentWindowPosition) _alignmentEntries
+        extraTrack = concat (replicate longestSequenceIdLength " ") ++ V.toList (V.slice currentWindowPosition (currentWindowPosition + 60)  (V.fromList _conservationTrack)) ++ "\n"
+
+showAlignmentLine :: Int -> Int -> ClustalAlignmentEntry -> String
+showAlignmentLine longestSequenceIdLength currentWindowPosition _alignmentEntry = (entrySequenceIdentifier _alignmentEntry) ++ concat (replicate (longestSequenceIdLength - length (entrySequenceIdentifier _alignmentEntry)) " ") ++ V.toList (V.slice currentWindowPosition (currentWindowPosition + 60)  (V.fromList (entryAlignedSequence _alignmentEntry))) ++ "\n"
 
 data ClustalAlignmentEntry = ClustalAlignmentEntry
   {
