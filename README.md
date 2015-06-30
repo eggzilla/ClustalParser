@@ -1,4 +1,4 @@
-ClustalParser   [![Build Status](https://travis-ci.org/eggzilla/ClustalParser.svg)](https://travis-ci.org/eggzilla/ClustalParser)
+ClustalParser [![Hackage](https://img.shields.io/hackage/v/ClustalParser.svg)](https://hackage.haskell.org/package/ClustalParser) [![Build Status](https://travis-ci.org/eggzilla/ClustalParser.svg)](https://travis-ci.org/eggzilla/ClustalParser)
 =============
 
 Currently contains parsers and datatypes for: clustalw2, clustalo
