@@ -104,7 +104,16 @@ data StructuralClustalAlignment = StructuralClustalAlignment
     secondaryStructureTrack :: String,
     energy :: Double
   }
-  deriving (Show, Eq)
+  deriving (Eq)
+
+instance Show StructuralClustalAlignment where
+show (StructuralClustalAlignment _alignmentEntries _secondaryStructureTrack _energy) 
+    | not (null _alignmentEntries) = header ++ alignmentString
+    | otherwise = header
+    where header = "CLUSTAL W \n\n" 
+          longestSequenceIdLength =  (maximum (map length (map entrySequenceIdentifier _alignmentEntries))) + 1
+          totalSequenceLength = length (entryAlignedSequence (head _alignmentEntries))
+          alignmentString = showAlignment totalSequenceLength longestSequenceIdLength 0 _alignmentEntries _secondaryStructureTrack
 
 data StructuralClustalAlignmentSlice = StructuralClustalAlignmentSlice
   {

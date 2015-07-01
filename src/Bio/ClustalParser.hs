@@ -211,7 +211,7 @@ genParseAlignmentProcessStep = do
 mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
 mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
   where entrySlicesList = map structuralEntrySlices slices -- list of lists of entry slices
-        sequenceIdentifiers = map structuralEntrySequenceSliceIdentifier (head entrySlicesList)
+        sequenceIdentifiers = nub (map structuralEntrySequenceSliceIdentifier (head entrySlicesList))
         alignmentEntriesListBySlice =  map (map structuralEntryAlignedSliceSequence) entrySlicesList  
         transposedAlignmentEntriesListbySlice = transpose alignmentEntriesListBySlice
         mergedAlignmentSequenceEntries = map concat transposedAlignmentEntriesListbySlice
