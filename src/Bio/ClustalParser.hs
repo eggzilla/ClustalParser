@@ -189,29 +189,25 @@ genParseEnergy = do
 
 genParseMlocarnaHeader :: GenParser Char st String
 genParseMlocarnaHeader = do
-  string "mLo"
-  many1 (noneOf "\n")
+  string "mLocARNA"
+  many1 (choice [alphaNum,oneOf "-: ()."])
   newline
   string "Copyright"
-  many1 (noneOf "\n")
+  many1 (choice [alphaNum,char ' '])
   newline
   newline  
-  many1 genParseAlignmentProcessStep
+  string "Compute pair probs ..."
+  newline
+  string "Perform progressive alignment ..."
   newline
   newline
-  return ""
-
-genParseAlignmentProcessStep :: GenParser Char st String
-genParseAlignmentProcessStep = do
-  many1 (noneOf ".\n")
-  choice [try (string ("... ")), try (string ("..."))]
   newline
   return ""
 
 mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
 mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
   where entrySlicesList = map structuralEntrySlices slices -- list of lists of entry slices
-        sequenceIdentifiers = nub (map structuralEntrySequenceSliceIdentifier (head entrySlicesList))
+        sequenceIdentifiers = (map structuralEntrySequenceSliceIdentifier (head entrySlicesList))
         alignmentEntriesListBySlice =  map (map structuralEntryAlignedSliceSequence) entrySlicesList  
         transposedAlignmentEntriesListbySlice = transpose alignmentEntriesListBySlice
         mergedAlignmentSequenceEntries = map concat transposedAlignmentEntriesListbySlice

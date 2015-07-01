@@ -107,7 +107,7 @@ data StructuralClustalAlignment = StructuralClustalAlignment
   deriving (Eq)
 
 instance Show StructuralClustalAlignment where
-show (StructuralClustalAlignment _alignmentEntries _secondaryStructureTrack _energy) 
+  show (StructuralClustalAlignment _alignmentEntries _secondaryStructureTrack _energy) 
     | not (null _alignmentEntries) = header ++ alignmentString
     | otherwise = header
     where header = "CLUSTAL W \n\n" 
