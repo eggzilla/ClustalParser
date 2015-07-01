@@ -5,9 +5,9 @@ name:                ClustalParser
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.0.3
+version:             1.1.0
 synopsis:            Libary for parsing Clustal tools output
-description:         Currently contains parsers and datatypes for: clustalw2, clustalo
+description:         Currently contains parsers and datatypes for: clustalw2, clustalo, mlocarna
                      .
                      For more information on clustal Tools refer to <http://www.clustal.org/>
                      .
@@ -33,8 +33,8 @@ source-repository head
 
 source-repository this
   type:     git
-  location: https://github.com/eggzilla/ClustalParser/tree/1.0.3
-  tag:      1.0.3
+  location: https://github.com/eggzilla/ClustalParser/tree/1.1.0
+  tag:      1.1.0
 
 library
   -- Modules exported by the library.
@@ -42,9 +42,9 @@ library
   other-modules:     Bio.ClustalData
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.5 && <5, parsec, vector
+  build-depends:       base >=4.5 && <5, parsec>=3.1.9, vector
   -- compiler options
-  ghc-options:         -Wall -O2 -fno-warn-unused-do-bind
+  ghc-options:         -Wall -O -fno-warn-unused-do-bind
   -- Directories containing source files.
   hs-source-dirs:      src
   
@@ -53,4 +53,9 @@ executable ClustalParserTest
   build-depends:    base >= 4 && <= 5, cmdargs, ClustalParser, either-unwrap
   -- compiler options  
   ghc-options:         -Wall -O2
-  
+
+test-suite hspec
+    build-depends:    base, parsec, ClustalParser, hspec >= 1.8
+    hs-source-dirs:   test-suite
+    main-is:          Spec.hs
+    type:             exitcode-stdio-1.0  

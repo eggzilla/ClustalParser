@@ -243,7 +243,7 @@ readClustalAlignment = parseFromFile genParserClustalAlignment
 
 -- | Parse Clustal alignment (.aln) with secondary structure in dot-bracket notation from String (as produced by mlocarna)
 parseStructuralClustalAlignment :: String -> Either ParseError StructuralClustalAlignment 
-parseStructuralClustalAlignment = parse genParserStructuralClustalAlignment "genParserClustalAlignment"
+parseStructuralClustalAlignment = parse genParserStructuralClustalAlignment "genParserStructuralClustalAlignment"
 
 -- | Parse Clustal alignment (.aln) with secondary structure in dot-bracket notation from filehandle (as produced by mlocarna)                  
 readStructuralClustalAlignment :: String -> IO (Either ParseError StructuralClustalAlignment)   
