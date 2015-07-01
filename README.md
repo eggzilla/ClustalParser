@@ -9,7 +9,7 @@ For more information on clustal Tools refer to <http://www.clustal.org/>.
 
 Mlocarna is a multiple sequence alignment tool for RNA sequences with
 secondary structure output. 
-For more information on molocarna refer to <http://www.clustal.org/>.
+For more information on mlocarna refer to <http://www.bioinf.uni-freiburg.de/Software/LocARNA/>.
 
 4 types of output are parsed
 
