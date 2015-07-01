@@ -44,7 +44,7 @@ library
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.5 && <5, parsec>=3.1.9, vector
   -- compiler options
-  ghc-options:         -Wall -O -fno-warn-unused-do-bind
+  ghc-options:         -Wall -O2 -fno-warn-unused-do-bind
   -- Directories containing source files.
   hs-source-dirs:      src
   
