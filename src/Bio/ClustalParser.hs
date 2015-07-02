@@ -115,9 +115,7 @@ genParserSequenceParameters = do
 genParserClustalAlignment :: GenParser Char st ClustalAlignment
 genParserClustalAlignment = do
   many1 (noneOf "\n")
-  newline
-  newline
-  newline
+  many1 newline
   alignmentSlices <- many1 (try genParserClustalAlignmentSlice)
   eof  
   return (mergealignmentSlices alignmentSlices)
@@ -152,7 +150,7 @@ genParserClustalEntrySlice :: GenParser Char st ClustalAlignmentEntrySlice
 genParserClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   spacer <- many1 (char ' ')
-  sliceSequence <- many1 (oneOf "SNYRUAGCT-")
+  sliceSequence <- many1 (oneOf ".SNYRUAGCT-uagct")
   newline
   return $ ClustalAlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
 
@@ -199,9 +197,7 @@ genParseMlocarnaHeader = do
   string "Compute pair probs ..."
   newline
   string "Perform progressive alignment ..."
-  newline
-  newline
-  newline
+  many1 newline
   return ""
 
 mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
@@ -227,7 +223,7 @@ genParserStructuralClustalEntrySlice :: GenParser Char st StructuralClustalAlign
 genParserStructuralClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   many1 (char ' ')
-  sliceSequence <- many1 (oneOf "SNYRUAGCT-")
+  sliceSequence <- many1 (oneOf ".SNYRUAGCT-uagtc")
   newline
   return $ StructuralClustalAlignmentEntrySlice (filter (/='\n') sliceIdentifier) sliceSequence
 
