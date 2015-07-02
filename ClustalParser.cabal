@@ -5,15 +5,18 @@ name:                ClustalParser
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.1.0
+version:             1.1.1
 synopsis:            Libary for parsing Clustal tools output
-description:         Currently contains parsers and datatypes for: clustalw2, clustalo, mlocarna
+description:         Currently contains parsers and datatypes for: clustalw2, clustalo, mlocarna, cmalign
                      .
-                     For more information on clustal Tools refer to <http://www.clustal.org/>
+	             Clustal tools are multiple sequence alignment tools for biological sequence like DNA, RNA and Protein.
+                     For more information on clustal Tools refer to <http://www.clustal.org/>.
                      .
-                     ClustalW2 is a general purpose DNA or protein multiple sequence alignment program for three or more sequences.
+                     Mlocarna is a multiple sequence alignment tool for RNA sequences with secondary structure output. 
+                     For more information on mlocarna refer to <http://www.bioinf.uni-freiburg.de/Software/LocARNA/>.
                      .
-                     Clustal Omega is a new multiple sequence alignment program that uses seeded guide trees and HMM profile-profile techniques to generate alignments between three or more sequences.
+                     Cmalign is a multiple sequence alignment program based on RNA family models and produces
+                     ,among others, clustal output. It is part of infernal <http://infernal.janelia.org/>.
                      
 license:             GPL
 license-file:        LICENSE
@@ -33,8 +36,8 @@ source-repository head
 
 source-repository this
   type:     git
-  location: https://github.com/eggzilla/ClustalParser/tree/1.1.0
-  tag:      1.1.0
+  location: https://github.com/eggzilla/ClustalParser/tree/1.1.1
+  tag:      1.1.1
 
 library
   -- Modules exported by the library.
