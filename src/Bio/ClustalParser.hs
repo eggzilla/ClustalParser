@@ -196,6 +196,8 @@ genParseMlocarnaHeader = do
   newline  
   string "Compute pair probs ..."
   newline
+  optional (try (string "Compute pairwise alignments ... "))
+  optional (try newline)
   string "Perform progressive alignment ..."
   many1 newline
   return ""

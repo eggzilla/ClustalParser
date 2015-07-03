@@ -5,7 +5,7 @@ name:                ClustalParser
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.1.1
+version:             1.1.2
 synopsis:            Libary for parsing Clustal tools output
 description:         Currently contains parsers and datatypes for: clustalw2, clustalo, mlocarna, cmalign
                      .
@@ -36,8 +36,8 @@ source-repository head
 
 source-repository this
   type:     git
-  location: https://github.com/eggzilla/ClustalParser/tree/1.1.1
-  tag:      1.1.1
+  location: https://github.com/eggzilla/ClustalParser/tree/1.1.2
+  tag:      1.1.2
 
 library
   -- Modules exported by the library.

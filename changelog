@@ -1,4 +1,6 @@
 -*-change-log-*-
+1.1.2 Florian Eggenhofer <florian.eggenhofer@univie.ac.at> 3. July 2015
+        * Included parsing of optional field in mlocarna clustal output
 1.1.1 Florian Eggenhofer <florian.eggenhofer@univie.ac.at> 2. July 2015
         * Added support for cmalign clustal output .
 1.1.0 Florian Eggenhofer <florian.eggenhofer@univie.ac.at> 1. July 2015
