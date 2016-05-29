@@ -63,7 +63,8 @@ instance Show ClustalAlignment where
 showAlignment :: Int -> Int -> Int -> [ClustalAlignmentEntry] -> String -> String
 showAlignment totalSequenceLength longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack
   | totalSequenceLength == 0 = [] 
-  | currentWindowPosition <= totalSequenceLength = showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack ++ (showAlignment totalSequenceLength longestSequenceIdLength (currentWindowPosition + 60) _alignmentEntries _conservationTrack)
+  | currentWindowPosition < totalSequenceLength = showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack ++ (showAlignment totalSequenceLength longestSequenceIdLength (currentWindowPosition + 60) _alignmentEntries _conservationTrack)
+  | currentWindowPosition == totalSequenceLength = []                                               
   | otherwise = "" 
 
 showAlignmentBlock :: Int -> Int -> [ClustalAlignmentEntry] -> String -> String

@@ -114,8 +114,9 @@ genParserSequenceParameters = do
 -- | Parse the input as ClustalAlignment datatype
 genParserClustalAlignment :: GenParser Char st ClustalAlignment
 genParserClustalAlignment = do
+  string "CLUSTAL"
   many1 (noneOf "\n")
-  many1 newline
+  many1 (try newline)
   alignmentSlices <- many1 (try genParserClustalAlignmentSlice)
   eof  
   return (mergealignmentSlices alignmentSlices)
