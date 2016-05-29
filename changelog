@@ -1,6 +1,13 @@
 -*-change-log-*-
+1.1.3 Florian Eggenhofer <florian.eggenhofer@univie.ac.at> 4. July 2015
+        * Nucleotide sequences are now parsed by a unified function in line
+	with IUPAC nucleotide code
+1.1.2 Florian Eggenhofer <florian.eggenhofer@univie.ac.at> 3. July 2015
+        * Included parsing of optional field in mlocarna clustal output
+1.1.1 Florian Eggenhofer <florian.eggenhofer@univie.ac.at> 2. July 2015
+        * Added support for cmalign clustal output .
 1.1.0 Florian Eggenhofer <florian.eggenhofer@univie.ac.at> 1. July 2015
-        * Added Hspec test-suite for Parsing functions
+        * Added Hspec test-suite for parsing functions
 	* Added Show instances for ClustalAlignment and StructuralClustalAlignment
 1.0.3 Florian Eggenhofer <florian.eggenhofer@univie.ac.at> 19. April 2015
 	* Added Y (pyrimidine) and R (purine) to sequence characters

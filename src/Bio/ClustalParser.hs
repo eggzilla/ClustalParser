@@ -115,9 +115,7 @@ genParserSequenceParameters = do
 genParserClustalAlignment :: GenParser Char st ClustalAlignment
 genParserClustalAlignment = do
   many1 (noneOf "\n")
-  newline
-  newline
-  newline
+  many1 newline
   alignmentSlices <- many1 (try genParserClustalAlignmentSlice)
   eof  
   return (mergealignmentSlices alignmentSlices)
@@ -152,7 +150,7 @@ genParserClustalEntrySlice :: GenParser Char st ClustalAlignmentEntrySlice
 genParserClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   spacer <- many1 (char ' ')
-  sliceSequence <- many1 (oneOf "SNYRUAGCT-")
+  sliceSequence <- parseNucleotideAlignmentEntry
   newline
   return $ ClustalAlignmentEntrySlice sliceIdentifier sliceSequence (length spacer)
 
@@ -198,10 +196,10 @@ genParseMlocarnaHeader = do
   newline  
   string "Compute pair probs ..."
   newline
+  optional (try (string "Compute pairwise alignments ... "))
+  optional (try newline)
   string "Perform progressive alignment ..."
-  newline
-  newline
-  newline
+  many1 newline
   return ""
 
 mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
@@ -227,7 +225,7 @@ genParserStructuralClustalEntrySlice :: GenParser Char st StructuralClustalAlign
 genParserStructuralClustalEntrySlice = do
   sliceIdentifier <- many1 (noneOf " ")
   many1 (char ' ')
-  sliceSequence <- many1 (oneOf "SNYRUAGCT-")
+  sliceSequence <- parseNucleotideAlignmentEntry
   newline
   return $ StructuralClustalAlignmentEntrySlice (filter (/='\n') sliceIdentifier) sliceSequence
 
@@ -256,3 +254,27 @@ parseClustalSummary = parse genParserClustalSummary "genParserClustalSummary"
 -- | Parse Clustal summary (printed to STDOUT) from file
 readClustalSummary :: String -> IO (Either ParseError ClustalSummary)       
 readClustalSummary = parseFromFile genParserClustalSummary
+
+-- | Parse nucleotide sequence. Allowed letters according to IUPAC
+parseNucleotideSequence :: GenParser Char st String
+parseNucleotideSequence = do
+  nucleotideSequence <- many1 (oneOf "RYSWKMBDHVNATUGCryswkmbdhvnatugc") 
+  return $ nucleotideSequence
+
+-- | Parse nucleotide alignment entry. Allowed letters according to IUPAC and commonly used gap characters
+parseNucleotideAlignmentEntry :: GenParser Char st String
+parseNucleotideAlignmentEntry = do
+  entry <- many1 (oneOf "~_-.RYSWKMBDHVNATUGCryswkmbdhvnatugc") 
+  return $ entry
+
+-- | Parse protein amino acid code sequence. Allowed letters according to IUPAC
+parseProteinSequence :: GenParser Char st String
+parseProteinSequence = do
+  proteinSequence <- many1 (oneOf "ABCDEFGHIKLMNPQRSTVWXYZabcdefghiklmnpqrstvwxyz") 
+  return $ proteinSequence
+
+-- | Parse protein amino acid code alignment entry. Allowed letters according to IUPAC and commonly used gap characters
+parseProteinAlignmentEntry :: GenParser Char st String
+parseProteinAlignmentEntry = do
+  entry <- many1 (oneOf "~_-.ABCDEFGHIKLMNPQRSTVWXYZabcdefghiklmnpqrstvwxyz") 
+  return $ entry
