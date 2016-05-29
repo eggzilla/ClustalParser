@@ -25,13 +25,13 @@ spec = do
         (parseStructuralClustalAlignment "invalid input") `shouldBe` Left structuralClustalParseError
  
 clustalParseError :: ParseError
-clustalParseError = addErrorMessage (Expect "lf new-line") (addErrorMessage (SysUnExpect "") (newErrorMessage clustalErrorMessage clustalErrorSourcePosition))
+clustalParseError = (addErrorMessage (Expect "\"CLUSTAL\"") (newErrorMessage clustalErrorMessage clustalErrorSourcePosition))
 
 clustalErrorMessage :: Message
-clustalErrorMessage = SysUnExpect ""
+clustalErrorMessage = SysUnExpect "\"i\""
 
 clustalErrorSourcePosition :: SourcePos
-clustalErrorSourcePosition = newPos "genParserClustalAlignment" 1 14
+clustalErrorSourcePosition = newPos "genParserClustalAlignment" 1 1
 
 clustalExample :: String
 clustalExample = "CLUSTAL 2.1 multiple sequence alignment\n\n\nNC_0123:123-540 AATATATATTTTTTTTTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAAAAATTTTTTT\nNC_0223:123-540 AATATATATTTTTTTTTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAAAAATTTTTTT\nNC_0323:123-540 AATATATATTTTTTTTTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAAAAATTTTTTT\n                ************************************************************\nNC_0123:123-540 TTTTTTTTTTTTTT----------------------------------------------\nNC_0223:123-540 TTTTTTTTTTTTTTAATATATATTTTTTTTTTTTTTTTTTTTTTAAAAAAAAAAAAAAAA\nNC_0323:123-540 TTTTTTTTTTTTTTAATATATATTTTTTTTTTTTTTTTTTTTTTAAAAAAAAAAAAAAAA\n                **************                                              \n\nNC_0123:123-540 ----------------------------\nNC_0223:123-540 AAAAAAATTTTTTTTTTTTTTTTTTTTT\nNC_0323:123-540 AAAAAAATTTTTTTTTTTTTTTTTTTTT\n                *                           \n"
