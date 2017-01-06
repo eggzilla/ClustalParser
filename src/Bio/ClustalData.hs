@@ -3,26 +3,27 @@
 
 module Bio.ClustalData where
 import qualified Data.Vector as V
-    
+import qualified Data.Text as T
+       
 -- | Data type for clustal summary, containing information about the alignment process, usually printed to STDOUT
 data ClustalSummary = ClustalSummary
   {
-    clustalw2version :: String,
-    sequenceFormat :: String,
+    clustalw2version :: T.Text,
+    sequenceFormat :: T.Text,
     parametersOfInputSequences :: [SequenceParameters],
     pairwiseAlignmentSummaries :: [PairwiseAlignmentSummary],
-    guideTreeFileName :: String,
+    guideTreeFileName :: T.Text,
     groupNumber :: Int,
     groupSummaries :: [GroupSummary],
     alignmentScore :: Int,
-    alignmentFileName :: String
+    alignmentFileName :: T.Text
   }
   deriving (Show, Eq)
 
 data SequenceParameters = SequenceParameters
   {
      inputSequenceIndex :: Int,
-     inputSequenceIdentifier :: String,
+     inputSequenceIdentifier :: T.Text,
      inputSequenceLength :: Int
   }
   deriving (Show, Eq)
@@ -47,7 +48,7 @@ data GroupSummary = GroupSummary
 data ClustalAlignment = ClustalAlignment
   { 
     alignmentEntries :: [ClustalAlignmentEntry],
-    conservationTrack :: String
+    conservationTrack :: T.Text
   }
   deriving (Eq)
 
@@ -60,14 +61,14 @@ instance Show ClustalAlignment where
           totalSequenceLength = length (entryAlignedSequence (head _alignmentEntries))
           alignmentString = showAlignment totalSequenceLength longestSequenceIdLength 0 _alignmentEntries _conservationTrack
 
-showAlignment :: Int -> Int -> Int -> [ClustalAlignmentEntry] -> String -> String
+showAlignment :: Int -> Int -> Int -> [ClustalAlignmentEntry] -> T.Text -> String
 showAlignment totalSequenceLength longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack
   | totalSequenceLength == 0 = [] 
   | currentWindowPosition < totalSequenceLength = showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack ++ (showAlignment totalSequenceLength longestSequenceIdLength (currentWindowPosition + 60) _alignmentEntries _conservationTrack)
   | currentWindowPosition == totalSequenceLength = []                                               
   | otherwise = "" 
 
-showAlignmentBlock :: Int -> Int -> [ClustalAlignmentEntry] -> String -> String
+showAlignmentBlock :: Int -> Int -> [ClustalAlignmentEntry] -> T.Text -> String
 showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack = blockString
   where blockString = entries ++ extraTrack ++ "\n"
         entries = concatMap (showAlignmentLine longestSequenceIdLength currentWindowPosition) _alignmentEntries
@@ -78,22 +79,22 @@ showAlignmentLine longestSequenceIdLength currentWindowPosition _alignmentEntry 
 
 data ClustalAlignmentEntry = ClustalAlignmentEntry
   {
-    entrySequenceIdentifier :: String,
-    entryAlignedSequence :: String
+    entrySequenceIdentifier :: T.Text,
+    entryAlignedSequence :: T.Text
   }
   deriving (Show, Eq)
 
 data ClustalAlignmentSlice = ClustalAlignmentSlice
   {
     entrySlices :: [ClustalAlignmentEntrySlice],
-    conservationTrackSlice :: String
+    conservationTrackSlice :: T.Text
   }
   deriving (Show, Eq)
 
 data ClustalAlignmentEntrySlice = ClustalAlignmentEntrySlice
   {
-    entrySequenceSliceIdentifier :: String,
-    entryAlignedSliceSequence :: String,
+    entrySequenceSliceIdentifier :: T.Text,
+    entryAlignedSliceSequence :: T.Text,
     spacerLength :: Int
   }
   deriving (Show, Eq)
@@ -102,7 +103,7 @@ data ClustalAlignmentEntrySlice = ClustalAlignmentEntrySlice
 data StructuralClustalAlignment = StructuralClustalAlignment
   { 
     structuralAlignmentEntries :: [ClustalAlignmentEntry],
-    secondaryStructureTrack :: String,
+    secondaryStructureTrack :: T.Text,
     energy :: Double
   }
   deriving (Eq)
