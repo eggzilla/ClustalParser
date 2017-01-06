@@ -14,6 +14,7 @@ import Bio.ClustalData
 import Text.ParserCombinators.Parsec    
 import Control.Monad
 import Data.List
+import qualified Data.Text as T
 
 readDouble :: String -> Double
 readDouble = read              
@@ -69,7 +70,7 @@ genParserClustalSummary = do
   newline
   newline
   eof  
-  return $ ClustalSummary version sequenceFormat' sequenceParametersList pairwiseAlignmentSummaryList guideTreeFileName' (readInt numberOfGroups) groupSummaryList (readInt alignmentScore') alignmentFileName'
+  return $ ClustalSummary (T.pack version) (T.pack sequenceFormat') sequenceParametersList pairwiseAlignmentSummaryList (T.pack guideTreeFileName') (readInt numberOfGroups) groupSummaryList (readInt alignmentScore') (T.pack alignmentFileName')
 
 genParserGroupSummary :: GenParser Char st GroupSummary
 genParserGroupSummary = do
@@ -134,7 +135,7 @@ mergealignmentSlices slices = alignment
         alignment = ClustalAlignment mergedAlignmentEntries mergedConservationTrack
 
 constructAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
-constructAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry entryIdentifier entrySequence
+constructAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
 
 genParserClustalAlignmentSlice :: GenParser Char st ClustalAlignmentSlice
 genParserClustalAlignmentSlice = do
@@ -173,7 +174,7 @@ genSecondaryStructure = do
   many1 space
   secondaryStructure <- many1 (oneOf ".()")
   space
-  return secondaryStructure
+  return (T.pack secondaryStructure)
 
 genParseEnergy :: GenParser Char st Double
 genParseEnergy = do
@@ -203,7 +204,7 @@ genParseMlocarnaHeader = do
   many1 newline
   return ""
 
-mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
+mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> T.Text -> Double -> StructuralClustalAlignment
 mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
   where entrySlicesList = map structuralEntrySlices slices -- list of lists of entry slices
         sequenceIdentifiers = (map structuralEntrySequenceSliceIdentifier (head entrySlicesList))
@@ -214,7 +215,7 @@ mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
         alignment = StructuralClustalAlignment mergedAlignmentEntries secondaryStructure energy' 
 
 constructStructuralAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
-constructStructuralAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry entryIdentifier entrySequence
+constructStructuralAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
 
 genParserStructuralClustalAlignmentSlice :: GenParser Char st StructuralClustalAlignmentSlice
 genParserStructuralClustalAlignmentSlice = do
