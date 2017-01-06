@@ -57,8 +57,8 @@ instance Show ClustalAlignment where
     | not (null _alignmentEntries) = header ++ alignmentString
     | otherwise = header
     where header = "CLUSTAL W (1.8) multiple sequence alignment\n\n\n" 
-          longestSequenceIdLength =  (maximum (map length (map entrySequenceIdentifier _alignmentEntries))) + 1
-          totalSequenceLength = length (entryAlignedSequence (head _alignmentEntries))
+          longestSequenceIdLength =  (maximum (map T.length (map entrySequenceIdentifier _alignmentEntries))) + 1
+          totalSequenceLength = T.length (entryAlignedSequence (head _alignmentEntries))
           alignmentString = showAlignment totalSequenceLength longestSequenceIdLength 0 _alignmentEntries _conservationTrack
 
 showAlignment :: Int -> Int -> Int -> [ClustalAlignmentEntry] -> T.Text -> String
@@ -72,10 +72,10 @@ showAlignmentBlock :: Int -> Int -> [ClustalAlignmentEntry] -> T.Text -> String
 showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack = blockString
   where blockString = entries ++ extraTrack ++ "\n"
         entries = concatMap (showAlignmentLine longestSequenceIdLength currentWindowPosition) _alignmentEntries
-        extraTrack = concat (replicate longestSequenceIdLength " ") ++ V.toList (V.slice currentWindowPosition 60  (V.fromList _conservationTrack)) ++ "\n"
+        extraTrack = concat (replicate longestSequenceIdLength " ") ++ V.toList (V.slice currentWindowPosition 60  (V.fromList (T.unpack _conservationTrack))) ++ "\n"
 
 showAlignmentLine :: Int -> Int -> ClustalAlignmentEntry -> String
-showAlignmentLine longestSequenceIdLength currentWindowPosition _alignmentEntry = (entrySequenceIdentifier _alignmentEntry) ++ concat (replicate (longestSequenceIdLength - length (entrySequenceIdentifier _alignmentEntry)) " ") ++ V.toList (V.slice currentWindowPosition 60  (V.fromList (entryAlignedSequence _alignmentEntry))) ++ "\n"
+showAlignmentLine longestSequenceIdLength currentWindowPosition _alignmentEntry = T.unpack (entrySequenceIdentifier _alignmentEntry) ++ concat (replicate (longestSequenceIdLength - T.length (entrySequenceIdentifier _alignmentEntry)) " ") ++ V.toList (V.slice currentWindowPosition 60  (V.fromList (T.unpack (entryAlignedSequence _alignmentEntry)))) ++ "\n"
 
 data ClustalAlignmentEntry = ClustalAlignmentEntry
   {
@@ -87,14 +87,14 @@ data ClustalAlignmentEntry = ClustalAlignmentEntry
 data ClustalAlignmentSlice = ClustalAlignmentSlice
   {
     entrySlices :: [ClustalAlignmentEntrySlice],
-    conservationTrackSlice :: T.Text
+    conservationTrackSlice :: String
   }
   deriving (Show, Eq)
 
 data ClustalAlignmentEntrySlice = ClustalAlignmentEntrySlice
   {
-    entrySequenceSliceIdentifier :: T.Text,
-    entryAlignedSliceSequence :: T.Text,
+    entrySequenceSliceIdentifier :: String,
+    entryAlignedSliceSequence :: String,
     spacerLength :: Int
   }
   deriving (Show, Eq)
@@ -113,8 +113,8 @@ instance Show StructuralClustalAlignment where
     | not (null _alignmentEntries) = header ++ alignmentString
     | otherwise = header
     where header = "CLUSTAL W \n\n" 
-          longestSequenceIdLength =  (maximum (map length (map entrySequenceIdentifier _alignmentEntries))) + 1
-          totalSequenceLength = length (entryAlignedSequence (head _alignmentEntries))
+          longestSequenceIdLength =  (maximum (map T.length (map entrySequenceIdentifier _alignmentEntries))) + 1
+          totalSequenceLength = T.length (entryAlignedSequence (head _alignmentEntries))
           alignmentString = showAlignment totalSequenceLength longestSequenceIdLength 0 _alignmentEntries _secondaryStructureTrack
 
 data StructuralClustalAlignmentSlice = StructuralClustalAlignmentSlice

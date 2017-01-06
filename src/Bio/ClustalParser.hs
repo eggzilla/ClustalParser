@@ -110,7 +110,7 @@ genParserSequenceParameters = do
   space
   string "bp"
   newline
-  return $ SequenceParameters (readInt sequenceIndexParam) sequenceIdentifierParam (readInt sequenceLengthParam)
+  return $ SequenceParameters (readInt sequenceIndexParam) (T.pack sequenceIdentifierParam) (readInt sequenceLengthParam)
 
 -- | Parse the input as ClustalAlignment datatype
 genParserClustalAlignment :: GenParser Char st ClustalAlignment
@@ -132,7 +132,7 @@ mergealignmentSlices slices = alignment
         mergedAlignmentEntries = map constructAlignmentEntries (zip sequenceIdentifiers mergedAlignmentSequenceEntries)
         conservationTrackSlices = map conservationTrackSlice slices
         mergedConservationTrack = concat conservationTrackSlices
-        alignment = ClustalAlignment mergedAlignmentEntries mergedConservationTrack
+        alignment = ClustalAlignment mergedAlignmentEntries (T.pack mergedConservationTrack)
 
 constructAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
 constructAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
@@ -174,7 +174,7 @@ genSecondaryStructure = do
   many1 space
   secondaryStructure <- many1 (oneOf ".()")
   space
-  return (T.pack secondaryStructure)
+  return secondaryStructure
 
 genParseEnergy :: GenParser Char st Double
 genParseEnergy = do
@@ -204,7 +204,7 @@ genParseMlocarnaHeader = do
   many1 newline
   return ""
 
-mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> T.Text -> Double -> StructuralClustalAlignment
+mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
 mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
   where entrySlicesList = map structuralEntrySlices slices -- list of lists of entry slices
         sequenceIdentifiers = (map structuralEntrySequenceSliceIdentifier (head entrySlicesList))
@@ -212,7 +212,7 @@ mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
         transposedAlignmentEntriesListbySlice = transpose alignmentEntriesListBySlice
         mergedAlignmentSequenceEntries = map concat transposedAlignmentEntriesListbySlice
         mergedAlignmentEntries = map constructStructuralAlignmentEntries (zip sequenceIdentifiers mergedAlignmentSequenceEntries)
-        alignment = StructuralClustalAlignment mergedAlignmentEntries secondaryStructure energy' 
+        alignment = StructuralClustalAlignment mergedAlignmentEntries (T.pack secondaryStructure) energy' 
 
 constructStructuralAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
 constructStructuralAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
