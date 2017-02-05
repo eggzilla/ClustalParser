@@ -66,7 +66,7 @@ showAlignment totalSequenceLength longestSequenceIdLength currentWindowPosition 
   | totalSequenceLength == 0 = [] 
   | currentWindowPosition < totalSequenceLength = showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack ++ (showAlignment totalSequenceLength longestSequenceIdLength (currentWindowPosition + 60) _alignmentEntries _conservationTrack)
   | currentWindowPosition == totalSequenceLength = []                                               
-  | otherwise = "" 
+  | otherwise = ""
 
 showAlignmentBlock :: Int -> Int -> [ClustalAlignmentEntry] -> T.Text -> String
 showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack = blockString
@@ -92,12 +92,12 @@ data ClustalAlignmentSlice = ClustalAlignmentSlice
   deriving (Show, Eq)
 
 data ClustalAlignmentEntrySlice = ClustalAlignmentEntrySlice
-  {
-    entrySequenceSliceIdentifier :: String,
-    entryAlignedSliceSequence :: String,
-    spacerLength :: Int
-  }
-  deriving (Show, Eq)
+   {
+     entrySequenceSliceIdentifier :: String,
+     entryAlignedSliceSequence :: String,
+     spacerLength :: Int
+   }
+   deriving (Show, Eq)
 
 -- | Data structure for structural Clustal alignment format
 data StructuralClustalAlignment = StructuralClustalAlignment
@@ -117,11 +117,11 @@ instance Show StructuralClustalAlignment where
           totalSequenceLength = T.length (entryAlignedSequence (head _alignmentEntries))
           alignmentString = showAlignment totalSequenceLength longestSequenceIdLength 0 _alignmentEntries _secondaryStructureTrack
 
-data StructuralClustalAlignmentSlice = StructuralClustalAlignmentSlice
-  {
-    structuralEntrySlices :: [StructuralClustalAlignmentEntrySlice]
-  }
-  deriving (Show, Eq)
+-- data StructuralClustalAlignmentSlice = StructuralClustalAlignmentSlice
+--   {
+--     structuralEntrySlices :: [StructuralClustalAlignmentEntrySlice]
+--   }
+--   deriving (Show, Eq)
 
 data StructuralClustalAlignmentEntrySlice = StructuralClustalAlignmentEntrySlice
   {

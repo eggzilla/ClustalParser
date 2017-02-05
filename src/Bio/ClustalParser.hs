@@ -123,18 +123,17 @@ genParserClustalAlignment = do
 
 mergealignmentSlices :: [ClustalAlignmentSlice] -> ClustalAlignment
 mergealignmentSlices slices = alignment
-  where entrySlicesList = map entrySlices slices -- list of lists of entry slices
-        sequenceIdentifiers = nub (map entrySequenceSliceIdentifier (head entrySlicesList))
-        alignmentEntriesListBySlice =  map (map entryAlignedSliceSequence) entrySlicesList  
-        transposedAlignmentEntriesListbySlice = transpose alignmentEntriesListBySlice
-        mergedAlignmentSequenceEntries = map concat transposedAlignmentEntriesListbySlice
-        mergedAlignmentEntries = map constructAlignmentEntries (zip sequenceIdentifiers mergedAlignmentSequenceEntries)
-        conservationTrackSlices = map conservationTrackSlice slices
-        mergedConservationTrack = concat conservationTrackSlices
-        alignment = ClustalAlignment mergedAlignmentEntries (T.pack mergedConservationTrack)
+  where entrySlicesList = concatMap entrySlices slices -- list of lists of entry slices
+        sequenceIdentifiers = nub (map entrySequenceSliceIdentifier entrySlicesList)
+        mergedAlignmentEntries = map (constructAlignmentEntries entrySlicesList) sequenceIdentifiers
+        mergedConservationTrack = concatMap conservationTrackSlice slices
+        alignment = ClustalAlignment mergedAlignmentEntries (T.pack mergedConservationTrack)        
 
-constructAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
-constructAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
+constructAlignmentEntries ::  [ClustalAlignmentEntrySlice] -> String -> ClustalAlignmentEntry
+constructAlignmentEntries slices entryIdentifier= entry
+  where entrySlices = filter (\a -> entrySequenceSliceIdentifier a == entryIdentifier) slices
+        entrySequence = concatMap entryAlignedSliceSequence entrySlices
+        entry = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
 
 genParserClustalAlignmentSlice :: GenParser Char st ClustalAlignmentSlice
 genParserClustalAlignmentSlice = do
@@ -165,7 +164,7 @@ genParserStructuralClustalAlignment = do
   secondaryStructure <- genSecondaryStructure  
   energy' <- genParseEnergy
   eof  
-  return (mergeStructuralAlignmentSlices alignmentSlices secondaryStructure energy')
+  return (mergeStructuralAlignmentSlices (concat alignmentSlices) secondaryStructure energy')
 
 genSecondaryStructure :: GenParser Char st String
 genSecondaryStructure = do
@@ -208,24 +207,23 @@ genParseMlocarnaHeader = do
   many1 newline
   return ""
 
-mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentSlice] -> String -> Double -> StructuralClustalAlignment
+mergeStructuralAlignmentSlices :: [StructuralClustalAlignmentEntrySlice] -> String -> Double -> StructuralClustalAlignment
 mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
-  where entrySlicesList = map structuralEntrySlices slices -- list of lists of entry slices
-        sequenceIdentifiers = (map structuralEntrySequenceSliceIdentifier (head entrySlicesList))
-        alignmentEntriesListBySlice =  map (map structuralEntryAlignedSliceSequence) entrySlicesList  
-        transposedAlignmentEntriesListbySlice = transpose alignmentEntriesListBySlice
-        mergedAlignmentSequenceEntries = map concat transposedAlignmentEntriesListbySlice
-        mergedAlignmentEntries = map constructStructuralAlignmentEntries (zip sequenceIdentifiers mergedAlignmentSequenceEntries)
-        alignment = StructuralClustalAlignment mergedAlignmentEntries (T.pack secondaryStructure) energy' 
+  where sequenceIdentifiers = nub (map structuralEntrySequenceSliceIdentifier slices)
+        mergedAlignmentEntries = map (constructStructuralAlignmentEntries slices) sequenceIdentifiers
+        alignment = StructuralClustalAlignment mergedAlignmentEntries (T.pack secondaryStructure) energy'        
 
-constructStructuralAlignmentEntries :: (String, String) -> ClustalAlignmentEntry
-constructStructuralAlignmentEntries (entryIdentifier,entrySequence) = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
+constructStructuralAlignmentEntries ::  [StructuralClustalAlignmentEntrySlice] -> String -> ClustalAlignmentEntry
+constructStructuralAlignmentEntries slices entryIdentifier= entry
+  where entrySlices = filter (\a -> structuralEntrySequenceSliceIdentifier a == entryIdentifier) slices
+        entrySequence = concatMap structuralEntryAlignedSliceSequence entrySlices
+        entry = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
 
-genParserStructuralClustalAlignmentSlice :: GenParser Char st StructuralClustalAlignmentSlice
+genParserStructuralClustalAlignmentSlice :: GenParser Char st [StructuralClustalAlignmentEntrySlice]
 genParserStructuralClustalAlignmentSlice = do
   entrySlices' <- many1 (try genParserStructuralClustalEntrySlice)
   optional newline
-  return $ StructuralClustalAlignmentSlice entrySlices'
+  return entrySlices'
 
 genParserStructuralClustalEntrySlice :: GenParser Char st StructuralClustalAlignmentEntrySlice
 genParserStructuralClustalEntrySlice = do
