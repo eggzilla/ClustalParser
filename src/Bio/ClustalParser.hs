@@ -131,8 +131,8 @@ mergealignmentSlices slices = alignment
 
 constructAlignmentEntries ::  [ClustalAlignmentEntrySlice] -> String -> ClustalAlignmentEntry
 constructAlignmentEntries slices entryIdentifier= entry
-  where entrySlices = filter (\a -> entrySequenceSliceIdentifier a == entryIdentifier) slices
-        entrySequence = concatMap entryAlignedSliceSequence entrySlices
+  where currentSlices = filter (\a -> entrySequenceSliceIdentifier a == entryIdentifier) slices
+        entrySequence = concatMap entryAlignedSliceSequence currentSlices
         entry = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
 
 genParserClustalAlignmentSlice :: GenParser Char st ClustalAlignmentSlice
@@ -215,8 +215,8 @@ mergeStructuralAlignmentSlices slices secondaryStructure energy' = alignment
 
 constructStructuralAlignmentEntries ::  [StructuralClustalAlignmentEntrySlice] -> String -> ClustalAlignmentEntry
 constructStructuralAlignmentEntries slices entryIdentifier= entry
-  where entrySlices = filter (\a -> structuralEntrySequenceSliceIdentifier a == entryIdentifier) slices
-        entrySequence = concatMap structuralEntryAlignedSliceSequence entrySlices
+  where currentSlices = filter (\a -> structuralEntrySequenceSliceIdentifier a == entryIdentifier) slices
+        entrySequence = concatMap structuralEntryAlignedSliceSequence currentSlices
         entry = ClustalAlignmentEntry (T.pack entryIdentifier) (T.pack entrySequence)
 
 genParserStructuralClustalAlignmentSlice :: GenParser Char st [StructuralClustalAlignmentEntrySlice]

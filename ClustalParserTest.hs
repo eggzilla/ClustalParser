@@ -3,7 +3,7 @@ module Main where
     
 import System.Environment (getArgs)
 import Bio.ClustalParser
-import Data.Either.Unwrap
+--import Data.Either.Unwrap
 
 main :: IO ()
 main = do
