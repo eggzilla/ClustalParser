@@ -1,4 +1,6 @@
 -*-change-log-*-
+1.2.1 Florian Eggenhofer <egg@cs.uni-freiburg.de> 06. February 2017
+        * Structural alignment parser now works with multiline consensus structures
 1.2.0 Florian Eggenhofer <egg@cs.uni-freiburg.de> 07. January 2017
         * Changed datastructures for sequence identifers and sequences to Data.Text
 1.1.4 Florian Eggenhofer <egg@cs.uni-freiburg.de> 30. May 2016
