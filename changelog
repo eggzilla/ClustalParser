@@ -1,4 +1,7 @@
 -*-change-log-*-
+1.2.2 Florian Eggenhofer <egg@cs.uni-freiburg.de> 07. March 2018
+        * Clustal parser can now parse alignments with missing consensus
+	annotation
 1.2.1 Florian Eggenhofer <egg@cs.uni-freiburg.de> 06. February 2017
         * Structural alignment parser now works with multiline consensus structures
 1.2.0 Florian Eggenhofer <egg@cs.uni-freiburg.de> 07. January 2017
