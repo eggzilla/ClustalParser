@@ -1,15 +1,9 @@
 name:                ClustalParser
--- The package version.  See the Haskell package versioning policy (PVP) 
--- for standards guiding when and how versions should be incremented.
--- http://www.haskell.org/haskellwiki/Package_versioning_policy
--- PVP summary:      +-+------- breaking API changes
---                   | | +----- non-breaking API additions
---                   | | | +--- code changes with no API change
-version:             1.2.2
+version:             1.2.3
 synopsis:            Libary for parsing Clustal tools output
 description:         Currently contains parsers and datatypes for: clustalw2, clustalo, mlocarna, cmalign
                      .
-	             Clustal tools are multiple sequence alignment tools for biological sequence like DNA, RNA and Protein.
+                     Clustal tools are multiple sequence alignment tools for biological sequence like DNA, RNA and Protein.
                      For more information on clustal Tools refer to <http://www.clustal.org/>.
                      .
                      Mlocarna is a multiple sequence alignment tool for RNA sequences with secondary structure output. 
@@ -22,10 +16,11 @@ license:             GPL-3
 license-file:        LICENSE
 author:              Florian Eggenhofer
 maintainer:          egg@informatik.uni-freiburg.de
--- copyright:           
+-- copyright:
 category:            Bioinformatics
 build-type:          Simple
 cabal-version:       >=1.8
+Tested-With: GHC == 7.10.3, GHC == 8.0.2, GHC == 8.2.2
 
 extra-source-files:
   README.md changelog
@@ -36,8 +31,9 @@ source-repository head
 
 source-repository this
   type:     git
-  location: https://github.com/eggzilla/ClustalParser/tree/1.2.2
-  tag:      1.2.2
+  location: https://github.com/eggzilla/ClustalParser/tree/1.2.3
+  tag:      1.2.3
+
 
 library
   -- Modules exported by the library.
@@ -47,7 +43,7 @@ library
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.5 && <5, parsec>=3.1.9, vector, text 
   -- compiler options
-  ghc-options:         -Wall -O2 -fno-warn-unused-do-bind
+  ghc-options:         -Wall -fno-warn-unused-do-bind
   -- Directories containing source files.
   hs-source-dirs:      src
   
@@ -55,10 +51,11 @@ executable ClustalParserTest
   main-is:          ClustalParserTest.hs
   build-depends:    base >= 4 && <= 5, cmdargs, ClustalParser, either-unwrap
   -- compiler options  
-  ghc-options:         -Wall -O2
+  ghc-options:         -Wall
 
 test-suite hspec
-    build-depends:    base, parsec, ClustalParser, hspec >= 1.8, text
+    build-depends:    base, parsec, ClustalParser, hspec >= 2.0, text, hspec-discover
     hs-source-dirs:   test-suite
     main-is:          Spec.hs
-    type:             exitcode-stdio-1.0  
+    type:             exitcode-stdio-1.0
+    other-modules:    ClustalParserSpec
