@@ -54,7 +54,7 @@ executable ClustalParserTest
   ghc-options:         -Wall
 
 test-suite hspec
-    build-depends:    base, parsec, ClustalParser, hspec >= 2.0, text
+    build-depends:    base, parsec, ClustalParser, hspec >= 2.0, text, hspec-discover
     hs-source-dirs:   test-suite
     main-is:          Spec.hs
     type:             exitcode-stdio-1.0
