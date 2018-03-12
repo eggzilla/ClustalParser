@@ -141,11 +141,11 @@ genParserClustalAlignmentSlice = do
   entrySlices' <- many1 genParserClustalEntrySlice
   --extract length of identifier and spacer to determine offset of conservation track
   let offsetLenght = length (entrySequenceSliceIdentifier (head entrySlices')) + spacerLength (head entrySlices')
-  conservationTrackSlice  <- choice [(lookAhead (string "\n")), (try (genParserConservationTrackSlice offsetLenght))]
+  conservationTrackSliceChoice  <- choice [(lookAhead (string "\n")), (try (genParserConservationTrackSlice offsetLenght))]
   --spacerAndConservationTrackSlice <- many1 (noneOf "\n")
   --let conservationTrackSlice' = drop offsetLenght spacerAndConservationTrackSlice
   --newline
-  let conservationTrackSlice' = if (conservationTrackSlice == "\n") then "" else conservationTrackSlice
+  let conservationTrackSlice' = if (conservationTrackSliceChoice == "\n") then "" else conservationTrackSliceChoice
   optional newline
   return $ ClustalAlignmentSlice entrySlices' conservationTrackSlice'
 
