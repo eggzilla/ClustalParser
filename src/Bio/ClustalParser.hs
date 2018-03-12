@@ -118,6 +118,7 @@ genParserClustalAlignment = do
   many1 (noneOf "\n")
   many1 (try newline)
   alignmentSlices <- many1 (try genParserClustalAlignmentSlice)
+  optional newline
   eof  
   return (mergealignmentSlices alignmentSlices)
 

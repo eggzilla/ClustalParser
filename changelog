@@ -1,4 +1,6 @@
 -*-change-log-*-
+1.2.3 Florian Eggenhofer <egg@cs.uni-freiburg.de> 12. March 2018
+        * Fixed parsing of additional newline in Biopythons AlignIO output without conservation track
 1.2.2 Florian Eggenhofer <egg@cs.uni-freiburg.de> 07. March 2018
         * Clustal parser can now parse alignments with missing consensus
 	annotation

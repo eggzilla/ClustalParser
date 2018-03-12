@@ -1,11 +1,5 @@
 name:                ClustalParser
--- The package version.  See the Haskell package versioning policy (PVP) 
--- for standards guiding when and how versions should be incremented.
--- http://www.haskell.org/haskellwiki/Package_versioning_policy
--- PVP summary:      +-+------- breaking API changes
---                   | | +----- non-breaking API additions
---                   | | | +--- code changes with no API change
-version:             1.2.2
+version:             1.2.3
 synopsis:            Libary for parsing Clustal tools output
 description:         Currently contains parsers and datatypes for: clustalw2, clustalo, mlocarna, cmalign
                      .
@@ -22,10 +16,11 @@ license:             GPL-3
 license-file:        LICENSE
 author:              Florian Eggenhofer
 maintainer:          egg@informatik.uni-freiburg.de
--- copyright:           
+-- copyright:
 category:            Bioinformatics
 build-type:          Simple
 cabal-version:       >=1.8
+Tested-With: GHC == 7.10.3, GHC == 8.0.2, GHC == 8.2.2
 
 extra-source-files:
   README.md changelog
@@ -36,8 +31,8 @@ source-repository head
 
 source-repository this
   type:     git
-  location: https://github.com/eggzilla/ClustalParser/tree/1.2.2
-  tag:      1.2.2
+  location: https://github.com/eggzilla/ClustalParser/tree/1.2.3
+  tag:      1.2.3
 
 library
   -- Modules exported by the library.
