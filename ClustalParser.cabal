@@ -55,10 +55,10 @@ executable ClustalParserTest
   other-modules:    Biobase.Clustal.Import
                     Biobase.Clustal.Types
 
-test-suite hspec
-    build-depends:    base, parsec, ClustalParser, hspec >= 2.0, text, hspec-discover
-    hs-source-dirs:   test-suite
-    default-language: Haskell2010
-    main-is:          Spec.hs
-    type:             exitcode-stdio-1.0
-    other-modules:    ClustalParserSpec
+--test-suite hspec
+--    build-depends:    base, parsec, ClustalParser, hspec >= 2.0, text, hspec-discover
+--    hs-source-dirs:   test-suite
+--    default-language: Haskell2010
+--    main-is:          Spec.hs
+--    type:             exitcode-stdio-1.0
+--    other-modules:    ClustalParserSpec
