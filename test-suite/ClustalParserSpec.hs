@@ -1,6 +1,6 @@
 module ClustalParserSpec (spec) where
 
-import Bio.ClustalParser 
+import Biobase.Clustal.Import 
 import Test.Hspec
 import Test.Hspec.QuickCheck
 import Text.Parsec.Error
@@ -31,8 +31,8 @@ spec = do
     context "Parsing invalid input" $ do
       it "Returns ParseError" $ do
         (parseStructuralClustalAlignment "invalid input") `shouldBe` Left structuralClustalParseError
-                                                       
- 
+
+
 clustalParseError :: ParseError
 clustalParseError = (addErrorMessage (Expect "\"CLUSTAL\"") (newErrorMessage clustalErrorMessage clustalErrorSourcePosition))
 
@@ -59,7 +59,7 @@ structuralClustalErrorSourcePosition = newPos "genParserStructuralClustalAlignme
 
 structuralClustalExample :: String
 structuralClustalExample = "mLocARNA --- multiple Local (and global) Alignment of RNA --- LocARNA 1.8.0\nCopyright Sebastian Will\n\nCompute pair probs ...\nPerform progressive alignment ...\n\n\n\nAB001721.1/2735-2851  CCCGGUGACUAUAGAGAGAGGGCCACACCCGUUCCCAUCCCGAACACGGAAGUUAAGCCUCUCAUCGCUGAUGGUACUAUGUGGUUCGCUGCAUGGGAGAGUAGGACGUUGCCGGGU\ngi|451991584:1-117    CCCGGUGACUAUAGAGAGAGGGCCACACCCGUUCCCAUCCCGAACACGGAAGUUAAGCCUCUCAUCGCUGAUGGUACUAUGUGGUUCGCUGCAUGGGAGAGUAGGACGUUGCCGGGU\nalifold               (((((((((....(.(((.(((.....))).))).)...(((....)))..(((..(((((((((.((.(.(((.(((....))))))).))))))))).))..)))))))))))). (-38.30 = -38.30 +   0.00)\n"
-                           
+
 structuralClustalResult :: StructuralClustalAlignment
 structuralClustalResult = StructuralClustalAlignment [ClustalAlignmentEntry (T.pack "AB001721.1/2735-2851") (T.pack "CCCGGUGACUAUAGAGAGAGGGCCACACCCGUUCCCAUCCCGAACACGGAAGUUAAGCCUCUCAUCGCUGAUGGUACUAUGUGGUUCGCUGCAUGGGAGAGUAGGACGUUGCCGGGU"),ClustalAlignmentEntry (T.pack "gi|451991584:1-117") (T.pack "CCCGGUGACUAUAGAGAGAGGGCCACACCCGUUCCCAUCCCGAACACGGAAGUUAAGCCUCUCAUCGCUGAUGGUACUAUGUGGUUCGCUGCAUGGGAGAGUAGGACGUUGCCGGGU")] (T.pack  "(((((((((....(.(((.(((.....))).))).)...(((....)))..(((..(((((((((.((.(.(((.(((....))))))).))))))))).))..)))))))))))).") (-38.30)
 

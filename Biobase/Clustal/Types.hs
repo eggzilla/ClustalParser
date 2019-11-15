@@ -1,10 +1,10 @@
--- | This module contains data structures for the Clustal tools 
+-- | This module contains data structures for the Clustal tools
 --   For more information on Clustal tools consult: <http://www.clustal.org/>
 
-module Bio.ClustalData where
+module Biobase.Clustal.Types where
 import qualified Data.Vector as V
 import qualified Data.Text as T
-       
+
 -- | Data type for clustal summary, containing information about the alignment process, usually printed to STDOUT
 data ClustalSummary = ClustalSummary
   {
@@ -46,26 +46,26 @@ data GroupSummary = GroupSummary
 
 -- | Data structure for Clustal alignment format
 data ClustalAlignment = ClustalAlignment
-  { 
+  {
     alignmentEntries :: [ClustalAlignmentEntry],
     conservationTrack :: T.Text
   }
   deriving (Eq)
 
 instance Show ClustalAlignment where
-  show (ClustalAlignment _alignmentEntries _conservationTrack ) 
+  show (ClustalAlignment _alignmentEntries _conservationTrack )
     | not (null _alignmentEntries) = header ++ alignmentString
     | otherwise = header
-    where header = "CLUSTAL W (1.8) multiple sequence alignment\n\n\n" 
+    where header = "CLUSTAL W (1.8) multiple sequence alignment\n\n\n"
           longestSequenceIdLength =  (maximum (map T.length (map entrySequenceIdentifier _alignmentEntries))) + 1
           totalSequenceLength = T.length (entryAlignedSequence (head _alignmentEntries))
           alignmentString = showAlignment totalSequenceLength longestSequenceIdLength 0 _alignmentEntries _conservationTrack
 
 showAlignment :: Int -> Int -> Int -> [ClustalAlignmentEntry] -> T.Text -> String
 showAlignment totalSequenceLength longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack
-  | totalSequenceLength == 0 = [] 
+  | totalSequenceLength == 0 = []
   | currentWindowPosition < totalSequenceLength = showAlignmentBlock longestSequenceIdLength currentWindowPosition _alignmentEntries _conservationTrack ++ (showAlignment totalSequenceLength longestSequenceIdLength (currentWindowPosition + 60) _alignmentEntries _conservationTrack)
-  | currentWindowPosition == totalSequenceLength = []                                               
+  | currentWindowPosition == totalSequenceLength = []
   | otherwise = ""
 
 showAlignmentBlock :: Int -> Int -> [ClustalAlignmentEntry] -> T.Text -> String
@@ -101,7 +101,7 @@ data ClustalAlignmentEntrySlice = ClustalAlignmentEntrySlice
 
 -- | Data structure for structural Clustal alignment format
 data StructuralClustalAlignment = StructuralClustalAlignment
-  { 
+  {
     structuralAlignmentEntries :: [ClustalAlignmentEntry],
     secondaryStructureTrack :: T.Text,
     energy :: Double
@@ -109,10 +109,10 @@ data StructuralClustalAlignment = StructuralClustalAlignment
   deriving (Eq)
 
 instance Show StructuralClustalAlignment where
-  show (StructuralClustalAlignment _alignmentEntries _secondaryStructureTrack _energy) 
+  show (StructuralClustalAlignment _alignmentEntries _secondaryStructureTrack _energy)
     | not (null _alignmentEntries) = header ++ alignmentString
     | otherwise = header
-    where header = "CLUSTAL W \n\n" 
+    where header = "CLUSTAL W \n\n"
           longestSequenceIdLength =  (maximum (map T.length (map entrySequenceIdentifier _alignmentEntries))) + 1
           totalSequenceLength = T.length (entryAlignedSequence (head _alignmentEntries))
           alignmentString = showAlignment totalSequenceLength longestSequenceIdLength 0 _alignmentEntries _secondaryStructureTrack
@@ -129,5 +129,3 @@ data StructuralClustalAlignmentEntrySlice = StructuralClustalAlignmentEntrySlice
     structuralEntryAlignedSliceSequence :: String
   }
   deriving (Show, Eq)
-
-
